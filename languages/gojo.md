@@ -8,15 +8,6 @@ Gojo is an experimental systems language built around ownership, restricted borr
 
 Research date is 2026-11-11. This study pins commit `215e07c8f016203c52a68e91db9d7097e8e4ff4b`, dated 2026-11-10. The locally built compiler reports `gojo 0.0.1 (215e07c8f0, aarch64-apple-darwin)`. The language reference describes implemented behavior, while the packages and WebAssembly documents contain proposals as well. [Pinned source](https://github.com/egoist/gojo/tree/215e07c8f016203c52a68e91db9d7097e8e4ff4b), [language reference](https://github.com/egoist/gojo/blob/215e07c8f016203c52a68e91db9d7097e8e4ff4b/docs/spec.md), [WebAssembly proposal](https://github.com/egoist/gojo/blob/215e07c8f016203c52a68e91db9d7097e8e4ff4b/docs/wasm.md)
 
-| Area | Assessment at this snapshot |
-| --- | --- |
-| Program correctness | Ownership, checked borrowing, exhaustive matching, explicit error handling, and linear resource protocols offer substantial implemented checks. Assurance depends on the compiler, C code generation, runtime, standard library, and unsafe boundaries. |
-| Memory safety and efficiency | Unique ownership is the default. Selective early frees, explicit Rc/Arc, small-object allocation, and box reuse offer useful mechanisms. Task stacks and long-lived shared graphs require separate workload measurements. |
-| Systems programming | Fixed-width integers, f64, raw pointers, C interoperability, files, processes, and network libraries cover user-space systems work. Supported hosts and low-level control remain narrower than mature systems languages. |
-| Compilation and execution | The local integer loop executes close to C/Rust. With a warm runtime cache, its full release build is about 1.56× Go and 1.66× Zig in this experiment. A fresh runtime cache adds substantial startup compilation work. |
-| Concurrency | Scoped, stackful M:N tasks support borrowing, cancellation, channels, and shared-state checks. Scheduling, blocking FFI, deadlocks, and fixed-address stacks remain relevant runtime costs. |
-| Metaprogramming | Monomorphized generics, integer const parameters, and static reflection cover useful specialization and serialization. Compile-time facilities are deliberately bounded. |
-
 ## Program correctness
 
 Owned values move into `sink` parameters. Ordinary parameters borrow, and `inout` parameters require an explicit `&` at the call. The checker tracks moved and maybe-moved values, including loop-carried moves, mutable access conflicts, and views of values that may be modified. References and views have restricted storage and escape rules. A returned view can name its source with `of`, or the compiler can derive that provenance from returns. This reduces lifetime syntax by restricting the shapes of borrowing programs. [Ownership checker](https://github.com/egoist/gojo/blob/215e07c8f016203c52a68e91db9d7097e8e4ff4b/src/borrowck.rs), [ownership rules](https://github.com/egoist/gojo/blob/215e07c8f016203c52a68e91db9d7097e8e4ff4b/docs/spec.md#5-ownership)

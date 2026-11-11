@@ -89,6 +89,8 @@ The following are deductions about this proposal, not measured Goose defects or 
 
 The most revealing early tests are a long-lived graph with deletion and callbacks, an asynchronous pipeline with cancellation and slow consumers, and independently compiled libraries returning views. Passing only a parser arena benchmark would leave these central risks unresolved. A credible result can retain limited checks and explicit boundary decisions; it need not claim that every workload has zero bookkeeping or optimal reclamation.
 
+Concrete candidate mechanisms and their semantics are developed in [Designs for independent lifetimes inside regions](region-reclamation-designs.md), including reclaimable stores, declarative cleanup relationships, and deferred deletion phases.
+
 ## What would count as a breakthrough?
 
 The candidate contribution is the combination of **low source-level bookkeeping, compositional safety checking, and predictable costs** across storage, deletion, and concurrency. Individual components already exist. A new syntax or a bump allocator alone would not establish a research breakthrough.

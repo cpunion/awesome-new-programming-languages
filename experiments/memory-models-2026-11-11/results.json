@@ -1,0 +1,136 @@
+{
+  "measured_at": "2026-11-11T14:56:22.780665+08:00",
+  "host": "Darwin/arm64",
+  "scope": "Source-level allocation sites and generated code, not process-wide allocation, RSS, performance, or a memory-safety proof",
+  "tools": {
+    "clang": "Homebrew clang version 22.1.8",
+    "goose": "goose f4637bf (runtime d521138194f1)",
+    "koka": "Koka 3.2.9, 05:35:00 Sep 18 2026 (ghc release version)",
+    "lean": "Lean (version 4.34.1, arm64-apple-darwin24.6.0, commit 5045d0056413266e57c625dcd7c365b10e377c52, Release)"
+  },
+  "records": {
+    "goose_codegen": "parsed ok: 4 top-level declarations, 1 file(s)\ntypechecked ok: 3 specialization(s), 1 struct/0 enum instance(s); optimized -O2: 0 inlined, 0 base case(s), 0 folded, 0 propagated, 0 tail loop(s), 0 reassociated\nbce: elided 0/0 index and 0/0 slice checks\nwrote records.c (210335 bytes)\n",
+    "records": {
+      "checksum": "56010610",
+      "phases": [
+        {
+          "phase": "startup",
+          "malloc_calls": 1,
+          "calloc_calls": 2,
+          "realloc_calls": 0,
+          "free_calls": 0,
+          "mmap_calls": 2,
+          "requested_bytes": 131168,
+          "mapped_virtual_bytes": 4297064448
+        },
+        {
+          "phase": "work",
+          "malloc_calls": 0,
+          "calloc_calls": 0,
+          "realloc_calls": 0,
+          "free_calls": 0,
+          "mmap_calls": 0,
+          "requested_bytes": 0,
+          "mapped_virtual_bytes": 0
+        }
+      ]
+    },
+    "records_individual": {
+      "checksum": "56010610",
+      "phases": [
+        {
+          "phase": "startup",
+          "malloc_calls": 0,
+          "calloc_calls": 0,
+          "realloc_calls": 0,
+          "free_calls": 0,
+          "mmap_calls": 0,
+          "requested_bytes": 0,
+          "mapped_virtual_bytes": 0
+        },
+        {
+          "phase": "work",
+          "malloc_calls": 10001,
+          "calloc_calls": 0,
+          "realloc_calls": 0,
+          "free_calls": 10001,
+          "mmap_calls": 0,
+          "requested_bytes": 318890,
+          "mapped_virtual_bytes": 0
+        }
+      ]
+    },
+    "records_region": {
+      "checksum": "56010610",
+      "phases": [
+        {
+          "phase": "startup",
+          "malloc_calls": 0,
+          "calloc_calls": 0,
+          "realloc_calls": 0,
+          "free_calls": 0,
+          "mmap_calls": 0,
+          "requested_bytes": 0,
+          "mapped_virtual_bytes": 0
+        },
+        {
+          "phase": "work",
+          "malloc_calls": 1,
+          "calloc_calls": 0,
+          "realloc_calls": 0,
+          "free_calls": 1,
+          "mmap_calls": 0,
+          "requested_bytes": 480000,
+          "mapped_virtual_bytes": 0
+        }
+      ]
+    }
+  },
+  "lean": {
+    "observations": [
+      {
+        "retained_original": false,
+        "generated_ctor_calls": 0,
+        "checksum": 500500,
+        "original_checksum": 0
+      },
+      {
+        "retained_original": true,
+        "generated_ctor_calls": 1000,
+        "checksum": 500500,
+        "original_checksum": 499500
+      }
+    ],
+    "transform_c": "LEAN_EXPORT lean_object* l_transform(lean_object* v_x_12_){\n_start:\n{\nif (lean_obj_tag(v_x_12_) == 0)\n{\nreturn v_x_12_;\n}\nelse\n{\nlean_object* v_head_13_; lean_object* v_tail_14_; lean_object* v___x_16_; uint8_t v_isShared_17_; uint8_t v_isSharedCheck_24_; \nv_head_13_ = lean_ctor_get(v_x_12_, 0);\nv_tail_14_ = lean_ctor_get(v_x_12_, 1);\nv_isSharedCheck_24_ = !lean_is_exclusive(v_x_12_);\nif (v_isSharedCheck_24_ == 0)\n{\nv___x_16_ = v_x_12_;\nv_isShared_17_ = v_isSharedCheck_24_;\ngoto v_resetjp_15_;\n}\nelse\n{\nlean_inc(v_tail_14_);\nlean_inc(v_head_13_);\nlean_dec(v_x_12_);\nv___x_16_ = lean_box(0);\nv_isShared_17_ = v_isSharedCheck_24_;\ngoto v_resetjp_15_;\n}\nv_resetjp_15_:\n{\nlean_object* v___x_18_; lean_object* v___x_19_; lean_object* v___x_20_; lean_object* v___x_22_; \nv___x_18_ = lean_unsigned_to_nat(1u);\nv___x_19_ = lean_nat_add(v_head_13_, v___x_18_);\nlean_dec(v_head_13_);\nv___x_20_ = l_transform(v_tail_14_);\nif (v_isShared_17_ == 0)\n{\nlean_ctor_set(v___x_16_, 1, v___x_20_);\nlean_ctor_set(v___x_16_, 0, v___x_19_);\nv___x_22_ = v___x_16_;\ngoto v_reusejp_21_;\n}\nelse\n{\nlean_object* v_reuseFailAlloc_23_; \nv_reuseFailAlloc_23_ = lean_alloc_ctor(1, 2, 0);\nlean_ctor_set(v_reuseFailAlloc_23_, 0, v___x_19_);\nlean_ctor_set(v_reuseFailAlloc_23_, 1, v___x_20_);\nv___x_22_ = v_reuseFailAlloc_23_;\ngoto v_reusejp_21_;\n}\nv_reusejp_21_:\n{\nreturn v___x_22_;\n}\n}\n}\n}\n}",
+    "stderr": "",
+    "scope": "Calls to lean_alloc_ctor in this generated C translation unit between audit markers; not allocations hidden in precompiled runtime or inline helpers"
+  },
+  "koka": {
+    "on": {
+      "stdout": "501500\n501500\n500500",
+      "stderr": "",
+      "transform_c": "kk_std_core_types__list kk_reuseprobe__trmc_unroll_transform_10000(kk_std_core_types__list xs, kk_std_core_types__cctx _acc, kk_context_t* _ctx) { /* (xs : list<int>, ctx<list<int>>) -> list<int> */ \n  kk__tailcall: ;\n  if (kk_std_core_types__is_Cons(xs, _ctx)) {\n    struct kk_std_core_types_Cons* _con_x22 = kk_std_core_types__as_Cons(xs, _ctx);\n    kk_box_t _box_x0 = _con_x22->head;\n    kk_std_core_types__list xx = _con_x22->tail;\n    kk_integer_t x = kk_integer_unbox(_box_x0, _ctx);\n    kk_reuse_t _ru_x21 = kk_reuse_null; /*@reuse*/;\n    if kk_likely(kk_datatype_ptr_is_unique(xs, _ctx)) {\n      _ru_x21 = (kk_datatype_ptr_reuse(xs, _ctx));\n    }\n    else {\n      kk_integer_dup(x, _ctx);\n      kk_std_core_types__list_dup(xx, _ctx);\n      kk_datatype_ptr_decref_small(xs, _ctx);\n    }\n    kk_integer_t _trmc_x10114 = kk_integer_add_small_const(x, 1, _ctx); /*int*/;\n    kk_std_core_types__list _trmc_x10115 = kk_datatype_null(); /*list<int>*/;\n    kk_std_core_types__list _trmc_x10116 = kk_std_core_types__new_Cons(_ru_x21, 0, kk_integer_box(_trmc_x10114, _ctx), _trmc_x10115, _ctx); /*list<int>*/;\n    kk_field_addr_t _b_x10_15 = kk_field_addr_create(&kk_std_core_types__as_Cons(_trmc_x10116, _ctx)->tail, _ctx); /*@field-addr<list<int>>*/;\n    { // tailcall\n      kk_std_core_types__cctx _x_x23 = kk_cctx_extend_linear(_acc,(kk_std_core_types__list_box(_trmc_x10116, _ctx)),_b_x10_15,kk_context()); /*ctx<0>*/\n      xs = xx;\n      _acc = _x_x23;\n      goto kk__tailcall;\n    }\n  }\n  {\n    kk_box_t _x_x24 = kk_cctx_apply_linear(_acc,(kk_std_core_types__list_box(kk_std_core_types__new_Nil(_ctx), _ctx)),kk_context()); /*-1*/\n    return kk_std_core_types__list_unbox(_x_x24, KK_OWNED, _ctx);\n  }\n}\n",
+      "reuse_enabled": true,
+      "scope": "Generated-code comparison and output preservation; no allocation counter or runtime ratio"
+    },
+    "off": {
+      "stdout": "501500\n501500\n500500",
+      "stderr": "",
+      "transform_c": "kk_std_core_types__list kk_reuseprobe__trmc_unroll_transform_10000(kk_std_core_types__list xs, kk_std_core_types__cctx _acc, kk_context_t* _ctx) { /* (xs : list<int>, ctx<list<int>>) -> list<int> */ \n  kk__tailcall: ;\n  if (kk_std_core_types__is_Cons(xs, _ctx)) {\n    struct kk_std_core_types_Cons* _con_x21 = kk_std_core_types__as_Cons(xs, _ctx);\n    kk_box_t _box_x0 = _con_x21->head;\n    kk_std_core_types__list xx = _con_x21->tail;\n    kk_integer_t x = kk_integer_unbox(_box_x0, _ctx);\n    if kk_likely(kk_datatype_ptr_is_unique(xs, _ctx)) {\n      kk_datatype_ptr_free_small(xs, _ctx);\n    }\n    else {\n      kk_integer_dup(x, _ctx);\n      kk_std_core_types__list_dup(xx, _ctx);\n      kk_datatype_ptr_decref_small(xs, _ctx);\n    }\n    kk_integer_t _trmc_x10114 = kk_integer_add_small_const(x, 1, _ctx); /*int*/;\n    kk_std_core_types__list _trmc_x10115 = kk_datatype_null(); /*list<int>*/;\n    kk_std_core_types__list _trmc_x10116 = kk_std_core_types__new_Cons(kk_reuse_null, 0, kk_integer_box(_trmc_x10114, _ctx), _trmc_x10115, _ctx); /*list<int>*/;\n    kk_field_addr_t _b_x10_15 = kk_field_addr_create(&kk_std_core_types__as_Cons(_trmc_x10116, _ctx)->tail, _ctx); /*@field-addr<list<int>>*/;\n    { // tailcall\n      kk_std_core_types__cctx _x_x22 = kk_cctx_extend_linear(_acc,(kk_std_core_types__list_box(_trmc_x10116, _ctx)),_b_x10_15,kk_context()); /*ctx<0>*/\n      xs = xx;\n      _acc = _x_x22;\n      goto kk__tailcall;\n    }\n  }\n  {\n    kk_box_t _x_x23 = kk_cctx_apply_linear(_acc,(kk_std_core_types__list_box(kk_std_core_types__new_Nil(_ctx), _ctx)),kk_context()); /*-1*/\n    return kk_std_core_types__list_unbox(_x_x23, KK_OWNED, _ctx);\n  }\n}\n",
+      "reuse_enabled": false,
+      "scope": "Generated-code comparison and output preservation; no allocation counter or runtime ratio"
+    },
+    "fipgood": {
+      "build_exit_code": 0,
+      "stdout": "Just(3)",
+      "allocation_contract_warning": false,
+      "diagnostics": ""
+    },
+    "fipbad": {
+      "build_exit_code": 0,
+      "stdout": "Just(1)",
+      "allocation_contract_warning": true,
+      "diagnostics": "fipbad.kk(1, 9): warning: fip fun fresh: function allocates at most 1 but was declared as allocating nothing"
+    }
+  }
+}

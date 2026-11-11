@@ -25,6 +25,7 @@
 ## 函数式编程与证明
 
 - [Bend 2](https://github.com/bendlang/bend) — 纯函数式语言，结合依赖类型、仿射所有权、显式正确性证明、编译期模板，以及 CPU／GPU 上的 fork-join 执行。[研究专题](languages/bend.md)
+- [Koka](https://github.com/koka-lang/koka) — 具有类型化效应的函数式语言，结合编译器自动插入的引用计数、唯一引用时的存储复用和完全原地执行注解。[内存模型研究](research/memory-models.zh-CN.md) · [English](research/memory-models.md)
 - [Zed](https://github.com/zedlanguage/zed) — 构建中的数据流语言，已有检查器和内存管理核心，计划结合确定性并行、证明与增量集合处理。[研究专题](languages/zed.zh-CN.md) · [English](languages/zed.md)
 
 ## 科学计算与 GPU 编程
@@ -41,6 +42,7 @@
 
 ## 研究与实验
 
+- [内存安全、减少分配与降低所有权管理负担](research/memory-models.zh-CN.md) — 比较已收录语言，并以 Koka／Perceus 和 Lean 作为研究参照。[English](research/memory-models.md) · [分配与复用检查](experiments/memory-models-2026-11-11/README.md)
 - [Bend 行为探针与整数循环基准](experiments/bend-2026-11-11/run.py) — 可复现的机制检查，以及 C／Rust／Go／Zig 对照。[实验结果](experiments/bend-2026-11-11/results.json)
 - [Gojo 安全探针与整数循环基准](experiments/gojo-2026-11-11/run.py) — 所有权与运行时检查、边界分析报告，以及 C／Rust／Go／Zig 对照。[实验结果](experiments/gojo-2026-11-11/results.json)
 - [Mojo 所有权探针与整数循环基准](experiments/mojo-2026-11-11/run.py) — 编译拒绝检查、编译期求值，以及 C／Rust／Go／Zig 对照。[实验结果](experiments/mojo-2026-11-11/results.json)

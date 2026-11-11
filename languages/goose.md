@@ -32,6 +32,8 @@ Generics specialize by type and inferred storage roots. Function values and trai
 
 ## Local experiments
 
+An additional [cross-language memory study](../research/memory-models.md) checks variable-size records: Goose made zero instrumented malloc calls in the marked construction/traversal phase, while a per-record C implementation made 10,001 and a manually packed C region made one. Runtime startup and virtual mappings are recorded separately; this is an allocation-site check, with no RSS or speed ranking.
+
 [Script](../experiments/goose-2026-11-11/run.py) · [Results](../experiments/goose-2026-11-11/results.json) · [Upstream check log](../experiments/goose-2026-11-11/upstream-checks.txt)
 
 All eight local probes matched expectations. Four compile-time rejections covered type mismatch, reference escape, shrinking with a live reference, and writing through `const`. Runtime bounds failure was detected. Positive programs preserved a reference through array growth, counted two struct fields by reflection, and showed a worker changing its own global to `7` while the parent's stayed `1`.

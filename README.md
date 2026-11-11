@@ -25,6 +25,7 @@ We are especially interested in program correctness, memory safety and efficienc
 ## Functional Programming and Proofs
 
 - [Bend 2](https://github.com/bendlang/bend) — A pure language combining dependent types, affine ownership, explicit correctness proofs, compile-time templates, and fork-join execution on CPUs and GPUs. [Study (中文)](languages/bend.md)
+- [Koka](https://github.com/koka-lang/koka) — An effect-typed functional language with compiler-inserted reference counting, uniqueness-based storage reuse, and fully in-place programming annotations. [Memory-model study](research/memory-models.md) · [中文](research/memory-models.zh-CN.md)
 - [Zed](https://github.com/zedlanguage/zed) — A dataflow language under construction, with an implemented checking and memory-management core and plans for deterministic parallelism, proofs, and incremental collection processing. [Study](languages/zed.md) · [中文](languages/zed.zh-CN.md)
 
 ## Scientific and GPU Computing
@@ -41,6 +42,7 @@ We are especially interested in program correctness, memory safety and efficienc
 
 ## Research and Experiments
 
+- [Memory safety, fewer allocations, and less ownership bookkeeping](research/memory-models.md) — A comparative study of the collected languages, with Koka/Perceus and Lean as research references. [中文](research/memory-models.zh-CN.md) · [Allocation and reuse checks](experiments/memory-models-2026-11-11/README.md)
 - [Bend behavior probes and integer-loop benchmark](experiments/bend-2026-11-11/run.py) — Reproducible checks and a C/Rust/Go/Zig comparison. [Results](experiments/bend-2026-11-11/results.json)
 - [Gojo safety probes and integer-loop benchmark](experiments/gojo-2026-11-11/run.py) — Ownership and runtime checks, bounds-analysis reports, and a C/Rust/Go/Zig comparison. [Results](experiments/gojo-2026-11-11/results.json)
 - [Mojo ownership probes and integer-loop benchmark](experiments/mojo-2026-11-11/run.py) — Compiler rejection checks, compile-time evaluation, and a C/Rust/Go/Zig comparison. [Results](experiments/mojo-2026-11-11/results.json)

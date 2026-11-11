@@ -1,45 +1,47 @@
 # Awesome New Programming Languages
 
-介绍和研究正在演进的编程语言，关注程序正确性、内存安全与效率、系统编程能力，以及编译和执行性能。
+English | [简体中文](README.zh-CN.md)
 
-每种语言从设计特点和适用场景出发，结合官方资料、源码与可复现实验，记录当前能力、限制和证据。编译效率以 Go、Zig 为参照，执行效率以 Rust、C 为参照。研究正文使用中文。
+Introductions and research on emerging programming languages, with a focus on program correctness, memory safety and efficiency, systems programming, and compilation and execution performance.
 
-## 研究重点
+Each study examines a language's design and use cases through official documentation, source code, and reproducible experiments. We record current capabilities, limitations, and supporting evidence, using Go and Zig as compilation benchmarks and Rust and C as execution benchmarks. Detailed language studies are currently written in Chinese.
 
-| 维度 | 关注的问题 |
+## Research Focus
+
+| Area | Questions |
 | --- | --- |
-| 程序正确性 | 类型系统能排除哪些错误，能表达和验证哪些业务性质，保障依赖哪些假设，哪些操作会越过保障边界 |
-| 内存正确性与效率 | 所有权、别名、生命周期、数组访问、并发访问、资源释放，以及分配、回收、复制、布局和峰值内存成本 |
-| 系统编程能力 | 数据表示、整数与浮点类型、FFI、操作系统接口、并发、资源控制、原生库输出和目标平台 |
-| 编译与执行效率 | 以 Go、Zig 的编译体验，以及 Rust、C 的执行效率为参照，结合实际工作负载衡量 |
+| Program correctness | Which errors does the type system prevent? Which application properties can be expressed and verified? What assumptions and escape hatches affect those guarantees? |
+| Memory safety and efficiency | How does the language handle ownership, aliasing, lifetimes, array access, concurrent access, and resource cleanup? What are the costs of allocation, reclamation, copying, layout, and peak memory usage? |
+| Systems programming | What support exists for data representation, numeric types, FFI, OS interfaces, concurrency, resource control, native libraries, and target platforms? |
+| Compilation and execution performance | How does the development experience compare with Go and Zig, and execution performance with Rust and C, on relevant workloads? |
 
-## 研究索引
+## Language Index
 
-Bend 2 将依赖类型、仿射所有权和显式正确性证明与 CPU／GPU 执行结合，是本项目首个研究对象。语言介绍和四个重点的分析收录在专题中。[官方项目](https://github.com/bendlang/bend) · [Bend 2 专题](languages/bend.md)
+Bend 2 combines dependent types, affine ownership, and explicit correctness proofs with CPU/GPU execution. It is the first language studied here. The detailed study covers its design and the four research areas above. [Official project](https://github.com/bendlang/bend) · [Bend 2 study (Chinese)](languages/bend.md)
 
-| 语言 | 研究快照 | 正确性 | 内存 | 系统编程 | 效率 |
+| Language | Snapshot | Correctness | Memory | Systems programming | Performance |
 | --- | --- | --- | --- | --- | --- |
-| [Bend 2](languages/bend.md) | 2026-11-11，源码版本 2.0.40 | 依赖类型、仿射类型、显式定律与证明，有 Lean 实现的复核内核 | 原生后端使用所有权与选择性引用计数，数组原地更新，索引回绕 | 已有文件、网络、进程与 C／JS 效应扩展，底层控制与原生库输出仍有限 | 本机整数循环接近 C／Rust，完整原生构建耗时高于本次 Go／Zig 对照 |
+| [Bend 2](languages/bend.md) | 2026-11-11, source version 2.0.40 | Dependent and affine types, explicit laws and proofs, and a Lean verification kernel | Ownership and selective reference counting in native builds, in-place array updates, wrapping indices | File, network, process, and C/JS effect interfaces, with limited low-level control and native library output | The local integer loop performs close to C/Rust, with longer full native builds than the Go/Zig implementations |
 
-## 证据与比较方式
+## Evidence and Comparisons
 
-研究记录注明日期和固定源码提交，引用官方文档、实现、测试和论文。项目宣称、源码分析、本项目实测及分析推断在对应文字中注明。
+Studies record the research date and a pinned source commit, citing official documentation, implementations, tests, and papers. Project claims, source analysis, local measurements, and inferences are identified in context.
 
-性能记录包含工具链、硬件、优化选项、缓存状态、重复次数与原始结果。比较时关注以下口径。
+Performance records include toolchains, hardware, optimization flags, cache state, repetitions, and raw results. Comparisons account for the following factors.
 
-- 编译时间分别关注检查／证明、生成代码、后端优化、链接、冷构建和增量编辑。
-- 执行时间分别关注单核、多核、GPU，以及启动和预热成本。
-- 数据表示、算法、输入、输出校验和硬件资源共同决定对照是否具有可比性。
-- 峰值 RSS、活跃堆、分配总量与 GPU 驻留内存对应不同成本。
-- 微基准的结论保留其工作负载范围，大型项目表现需要相应规模的证据。
+- Compilation measurements cover checking and proofs, code generation, backend optimization, linking, cold builds, and incremental edits.
+- Execution measurements cover single-core, multicore, and GPU runs, including startup and warmup costs.
+- Data representation, algorithms, inputs, output validation, and hardware resources determine comparability.
+- Peak RSS, live heap size, total allocation, and GPU-resident memory capture different costs.
+- Microbenchmark conclusions retain their workload scope. Large-project behavior requires measurements at the corresponding scale.
 
-## 已有实验
+## Experiments
 
-- [Bend 行为探针与五语言整数循环实验](experiments/bend-2026-11-11/run.py)
-- [原始测量与诊断结果](experiments/bend-2026-11-11/results.json)
+- [Bend behavior probes and five-language integer loop](experiments/bend-2026-11-11/run.py)
+- [Raw measurements and diagnostics](experiments/bend-2026-11-11/results.json)
 
-实验复现方法见 [Bend 研究记录](languages/bend.md#实验复现)。
+Reproduction instructions are included in the detailed study. [Bend experiment instructions (Chinese)](languages/bend.md#实验复现)
 
-## 参与研究
+## Contributing
 
-欢迎通过 Issue 提名语言、补充一手资料或指出结论变化，也欢迎通过 Pull Request 添加语言介绍、修正研究记录和提供可复现实验。新增语言可以沿用上述四个研究重点，并注明研究日期、源码版本与来源。
+Use issues to suggest languages, share primary sources, or flag changes to existing findings. Pull requests can add language introductions, improve studies, and contribute reproducible experiments. New studies can follow the four research areas above and record their research date, source version, and references.

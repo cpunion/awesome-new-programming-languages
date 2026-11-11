@@ -19,10 +19,12 @@ We are especially interested in program correctness, memory safety and efficienc
 ## Systems Programming
 
 - [Gojo](https://github.com/egoist/gojo) — An experimental systems language with ownership, borrowing without lifetime parameters, deterministic cleanup, structured stackful tasks, and static reflection. Compiles to C. [Study](languages/gojo.md) · [中文](languages/gojo.zh-CN.md)
+- [Rune](https://github.com/google/rune) — An unfinished systems language exploring secret-aware types, relational object ownership, Structure-of-Arrays storage, and compile-time code transformers. [Study](languages/rune.md) · [中文](languages/rune.zh-CN.md)
 
 ## Functional Programming and Proofs
 
 - [Bend 2](https://github.com/bendlang/bend) — A pure language combining dependent types, affine ownership, explicit correctness proofs, compile-time templates, and fork-join execution on CPUs and GPUs. [Study (中文)](languages/bend.md)
+- [Zed](https://github.com/zedlanguage/zed) — A dataflow language under construction, with an implemented checking and memory-management core and plans for deterministic parallelism, proofs, and incremental collection processing. [Study](languages/zed.md) · [中文](languages/zed.zh-CN.md)
 
 ## Scientific and GPU Computing
 
@@ -41,6 +43,8 @@ We are especially interested in program correctness, memory safety and efficienc
 - [Bend behavior probes and integer-loop benchmark](experiments/bend-2026-11-11/run.py) — Reproducible checks and a C/Rust/Go/Zig comparison. [Results](experiments/bend-2026-11-11/results.json)
 - [Gojo safety probes and integer-loop benchmark](experiments/gojo-2026-11-11/run.py) — Ownership and runtime checks, bounds-analysis reports, and a C/Rust/Go/Zig comparison. [Results](experiments/gojo-2026-11-11/results.json)
 - [Mojo ownership probes and integer-loop benchmark](experiments/mojo-2026-11-11/run.py) — Compiler rejection checks, compile-time evaluation, and a C/Rust/Go/Zig comparison. [Results](experiments/mojo-2026-11-11/results.json)
+- [Rune behavior probes](experiments/rune-2026-11-11/README.md) — Secret handling, runtime checks, generated relationships, and a documented secret-branch discrepancy. [Results](experiments/rune-2026-11-11/results.json)
+- [Zed component checks and build observations](experiments/zed-2026-11-11/README.md) — Kernel bit-operation tests and current macOS build limitations. [Results](experiments/zed-2026-11-11/results.json)
 
 Research notes record source versions, primary references, limitations, and measurement conditions. Performance findings retain their workload and toolchain scope.
 

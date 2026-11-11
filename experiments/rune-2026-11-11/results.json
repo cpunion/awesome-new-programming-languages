@@ -1,0 +1,92 @@
+{
+  "measured_at": "2026-11-11T11:37:13.829923+08:00",
+  "source_commit": "a8fb12f974736f20eaefb1f614df68411dac7bc8",
+  "method": "Default safety enabled, -O passed to Rune; no performance comparison; sources retained in this script",
+  "platform": {
+    "exit_code": 0,
+    "stdout": "Linux x86_64",
+    "stderr": ""
+  },
+  "clang": {
+    "exit_code": 0,
+    "stdout": "Ubuntu clang version 14.0.6\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/local/bin",
+    "stderr": ""
+  },
+  "probes": {
+    "secret_branch": {
+      "build": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "expectation": "compile_rejection",
+      "matches_expectation": false,
+      "unexpected_run": {
+        "exit_code": 0,
+        "stdout": "leaked",
+        "stderr": ""
+      },
+      "ir_secret_branch": "define internal void @secret_branch() {\n  %.tmp1 = alloca %struct.runtime_array\n  store %struct.runtime_array zeroinitializer, %struct.runtime_array* %.tmp1\n  ; statement 0x162 assignment password = secret(argv[1u64])\n  %1 = getelementptr inbounds %struct.runtime_array, %struct.runtime_array* @argv, i32 0, i32 1\n  %2 = load i64, i64* %1\n  %3 = icmp ult i64 1, %2\n  br i1 %3, label %boundsCheckPassed1, label %boundsCheckFailed2\nboundsCheckFailed2:\n  call void (%struct.runtime_array*, ...) @runtime_panic(%struct.runtime_array* @.str2)\n  unreachable\nboundsCheckPassed1:\n  %4 = getelementptr inbounds %struct.runtime_array, %struct.runtime_array* @argv, i32 0, i32 1\n  %5 = load i64, i64* %4\n  %6 = icmp ult i64 1, %5\n  br i1 %6, label %boundsCheckPassed3, label %boundsCheckFailed2\nboundsCheckPassed3:\n  %7 = getelementptr inbounds %struct.runtime_array, %struct.runtime_array* @argv, i32 0, i32 0\n  %8 = load i64*, i64** %7\n  %9 = bitcast i64* %8 to %struct.runtime_array*\n  %10 = getelementptr inbounds %struct.runtime_array, %struct.runtime_array* %9, i64 1\n  call void @runtime_freeArray(%struct.runtime_array* @secret_branch_password)\n  call void @runtime_copyArray(%struct.runtime_array* @secret_branch_password, %struct.runtime_array* %10, i64 1, i1 zeroext false)\n  ; statement 0x3bd if password == \"password\"\n  %11 = call i1 @runtime_compareArrays(i32 4, i32 0, %struct.runtime_array* @secret_branch_password, %struct.runtime_array* @.str3, i64 1, i1 zeroext false, i1 zeroext true)\n  br i1 %11, label %ifBody5, label %ifDone4\n  ; statement 0x3be print \"leaked\"\nifBody5:\n  call void (%struct.runtime_array*, %struct.runtime_array*, ...) @runtime_sprintf(%struct.runtime_array* %.tmp1, %struct.runtime_array* @.str4)\n  call void @runtime_puts(%struct.runtime_array* %.tmp1)\n  call void @runtime_freeArray(%struct.runtime_array* %.tmp1)\n  br label %ifDone4\n  ; statement 0x3c1 return\nifDone4:\n  ret void\n}"
+    },
+    "secret_index": {
+      "build": {
+        "exit_code": 1,
+        "stdout": "********** Error\n{work}/secret_index.rn:3: Error: Indexing with a secret is not allowed at a[index]\n    println a[index]\nStack trace:\nExiting due to error...",
+        "stderr": ""
+      },
+      "expectation": "compile_rejection",
+      "matches_expectation": true
+    },
+    "changed_type": {
+      "build": {
+        "exit_code": 1,
+        "stdout": "********** Error\n{work}/changed_type.rn:2: Error: Assigning different type to a than assigned before:\n  old: u64\n  new: string at a = \"wrong\"\n    a = \"wrong\"\nStack trace:\nExiting due to error...",
+        "stderr": ""
+      },
+      "expectation": "compile_rejection",
+      "matches_expectation": true
+    },
+    "bounds": {
+      "build": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "expectation": "runtime_rejection",
+      "run": {
+        "exit_code": 139,
+        "stdout": "Panic: Indexed passed the end of an array",
+        "stderr": ""
+      },
+      "matches_expectation": true
+    },
+    "overflow": {
+      "build": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "expectation": "runtime_rejection",
+      "run": {
+        "exit_code": 1,
+        "stdout": "Exception: overflow",
+        "stderr": ""
+      },
+      "matches_expectation": true
+    },
+    "relationship": {
+      "build": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "expectation": "success",
+      "run": {
+        "exit_code": 0,
+        "stdout": "7\ntrue",
+        "stderr": ""
+      },
+      "matches_expectation": true
+    }
+  }
+}

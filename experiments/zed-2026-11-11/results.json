@@ -1,0 +1,23 @@
+{
+  "reviewed_at": "2026-11-11",
+  "source_commit": "4598c420ab65fba1942f12a0888bc9f638fba9f9",
+  "host": "macOS, Apple M4 Max, arm64",
+  "rust_toolchain": "1.99-aarch64-apple-darwin",
+  "native_build": {
+    "command": "RUSTFLAGS=\"-C linker=/usr/bin/clang\" rustup run 1.99 cargo build --release --locked -p zed-native --bin zedc",
+    "exit_code": 101,
+    "diagnostic_tail": "   Compiling cranelift-bitset v0.137.1\n   Compiling wasmtime-internal-jit-icache-coherence v50.0.1\n   Compiling object v0.40.0\n   Compiling unicode-width v0.2.3\n   Compiling cranelift-entity v0.137.1\n   Compiling zed-alloc-count v0.0.0 ({source}/crates/zed-alloc-count)\n   Compiling cranelift-bforest v0.137.1\n   Compiling zed-kernel v0.0.0 ({source}/crates/zed-kernel)\n   Compiling zed-native v0.0.0 ({source}/crates/zed-native)\n   Compiling ar_archive_writer v0.5.3\n   Compiling psm v0.1.32\n   Compiling zedc-base v0.0.0 ({source}/crates/zedc-base)\n   Compiling zedc-int v0.0.0 ({source}/crates/zedc-int)\n   Compiling zed-rt v0.0.0 ({source}/crates/zed-rt)\nerror[E0425]: cannot find type `sysinfo` in crate `libc`\n  --> crates/zed-rt/src/stack.rs:44:33\n   |\n44 |             let mut info: libc::sysinfo = std::mem::zeroed();\n   |                                 ^^^^^^^ not found in `libc`\n\nerror[E0425]: cannot find function `sysinfo` in crate `libc`\n  --> crates/zed-rt/src/stack.rs:45:22\n   |\n45 |             if libc::sysinfo(&mut info) != 0 {\n   |                      ^^^^^^^ not found in `libc`\n\nerror[E0425]: cannot find value `MAP_STACK` in crate `libc`\n  --> crates/zed-rt/src/stack.rs:61:87\n   |\n61 |                 libc::MAP_PRIVATE | libc::MAP_ANONYMOUS | libc::MAP_NORESERVE | libc::MAP_STACK,\n   |                                                                                       ^^^^^^^^^ not found in `libc`\n\nFor more information about this error, try `rustc --explain E0425`.\nerror: could not compile `zed-rt` (lib) due to 3 previous errors\nwarning: build failed, waiting for other jobs to finish..."
+  },
+  "interpreter_harness_build": {
+    "description": "A temporary Rust binary calling zedc::run::command, depending only on the zedc library",
+    "exit_code": 101,
+    "diagnostic_tail": "   Compiling zedc-resolve v0.0.0 ({source}/crates/zedc-resolve)\n   Compiling zedc-zir v0.0.0 ({source}/crates/zedc-zir)\n   Compiling zedc-presburger v0.0.0 ({source}/crates/zedc-presburger)\n   Compiling zedc-preimage v0.0.0 ({source}/crates/zedc-preimage)\n   Compiling zedc-check v0.0.0 ({source}/crates/zedc-check)\n   Compiling zedc-elab v0.0.0 ({source}/crates/zedc-elab)\n   Compiling zedc v0.0.0 ({source}/crates/zedc)\nerror[E0599]: no associated function or constant named `PATH` found for struct `OFlags` in the current scope\n  --> {source}/crates/zedc/src/place.rs:50:29\n   |\n50 |         let flags = OFlags::PATH | OFlags::DIRECTORY | OFlags::CLOEXEC;\n   |                             ^^^^ associated function or constant not found in `OFlags`\n\nFor more information about this error, try `rustc --explain E0599`.\nerror: could not compile `zedc` (lib) due to 1 previous error"
+  },
+  "kernel_tests": {
+    "command": "RUSTFLAGS=\"-C linker=/usr/bin/clang\" rustup run 1.99 cargo test --locked -p zed-kernel --lib bits::tests -- --nocapture",
+    "exit_code": 0,
+    "output_tail": "    Finished `test` profile [optimized] target(s) in 14.25s\n     Running unittests src/lib.rs (build/cargo/debug/deps/zed_kernel-7410a32e2baad4a5)\n\nrunning 3 tests\ntest bits::tests::the_machine_operations_refuse_operands_outside_their_domains ... ok\ntest bits::tests::the_machine_and_the_exact_paths_agree ... ok\ntest bits::tests::the_machine_operations_agree_on_both_paths ... ok\n\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 183 filtered out; finished in 0.17s\n"
+  },
+  "scope": "Three upstream bit-operation tests passed. No end-to-end Zed program or performance measurement completed. Build failures establish macOS portability limitations, not failures on Linux.",
+  "rust_version": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+}

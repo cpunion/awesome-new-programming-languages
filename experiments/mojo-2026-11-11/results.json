@@ -1,0 +1,263 @@
+{
+  "measured_at": "2026-11-11T11:19:47.434419+08:00",
+  "tools": {
+    "mojo": "Mojo 1.2.0 (2016d0cd)",
+    "clang": "Homebrew clang version 22.1.8",
+    "rustc": "rustc 1.95.0-nightly (eda76d9d1 2026-01-21)",
+    "go": "go version go1.27.3 darwin/arm64",
+    "zig": "0.16.0"
+  },
+  "probes": {
+    "type_mismatch": {
+      "seconds": 0.8875665841624141,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Failed to initialize Crashpad.  Crash reporting will not be available.  Cause: while locating crashpad handler: unable to locate crashpad handler executable\n{work}/type_mismatch.mojo:2:18: error: cannot implicitly convert 'StringLiteral[\"wrong\"]' value to 'Int'\n    var x: Int = \"wrong\"\n                 ^~~~~~~\n{mojo}: error: failed to parse the provided Mojo source module",
+      "matches_expectation": true
+    },
+    "immutable_argument": {
+      "seconds": 0.8511036252602935,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Failed to initialize Crashpad.  Crash reporting will not be available.  Cause: while locating crashpad handler: unable to locate crashpad handler executable\n{work}/immutable_argument.mojo:2:5: error: invalid call to 'append': invalid use of mutating method on rvalue of type 'List[Int]'\n    xs.append(2)\n    ^~~~~~~~~\nImported from {work}/immutable_argument.mojo:1:\nMojo/stdlib/std/collections/list.mojo:882:1: note: function declared here\ndef append(mut self, var value: T, /) where conforms_to(T, Movable)    # note - synthetic signature\n^\n{mojo}: error: failed to parse the provided Mojo source module",
+      "matches_expectation": true
+    },
+    "mutable_alias": {
+      "seconds": 0.8327092090621591,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Failed to initialize Crashpad.  Crash reporting will not be available.  Cause: while locating crashpad handler: unable to locate crashpad handler executable\n{work}/mutable_alias.mojo:7:11: error: aliasing values passed mutably to 'a' argument and passed mutably to 'b' argument in 'change' call\n    change(xs, xs)\n          ^~~  ~~\n{work}/mutable_alias.mojo:7:11: note: 'origin_of(xs)' value is passed through aliasing 'mut' argument 'b'\n    change(xs, xs)\n          ^    ~~\n{mojo}: error: failed to parse the provided Mojo source module",
+      "matches_expectation": true
+    },
+    "use_after_transfer": {
+      "seconds": 1.0025011249817908,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Failed to initialize Crashpad.  Crash reporting will not be available.  Cause: while locating crashpad handler: unable to locate crashpad handler executable\n{work}/use_after_transfer.mojo:7:10: error: use of uninitialized value 's'\n    print(s)\n         ^\n{work}/use_after_transfer.mojo:5:9: note: 's' declared here\n    var s: String = \"owned\"\n        ^\n{mojo}: error: failed to run the pass manager",
+      "matches_expectation": true
+    },
+    "unhandled_error": {
+      "seconds": 0.7738230000250041,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Failed to initialize Crashpad.  Crash reporting will not be available.  Cause: while locating crashpad handler: unable to locate crashpad handler executable\n{work}/unhandled_error.mojo:5:15: error: cannot call function that may raise in a context that cannot raise\n    print(fail())\n          ~~~~^~\n{work}/unhandled_error.mojo:5:15: note: try surrounding the call in a 'try' block\n    print(fail())\n              ^\n{work}/unhandled_error.mojo:4:5: note: or mark surrounding function as 'raises'\ndef main():\n    ^\n{mojo}: error: failed to parse the provided Mojo source module",
+      "matches_expectation": true
+    },
+    "comptime": {
+      "seconds": 0.5005779578350484,
+      "exit_code": 0,
+      "stdout": "42",
+      "stderr": "",
+      "matches_expectation": true,
+      "build_stderr": "Failed to initialize Crashpad.  Crash reporting will not be available.  Cause: while locating crashpad handler: unable to locate crashpad handler executable"
+    }
+  },
+  "benchmark": {
+    "mojo": {
+      "build": {
+        "samples_seconds": [
+          0.9992294171825051,
+          0.9956983751617372,
+          1.3115062080323696,
+          1.035648625344038,
+          1.0232801251113415
+        ],
+        "median_seconds": 1.0232801251113415,
+        "min_seconds": 0.9956983751617372,
+        "max_seconds": 1.3115062080323696
+      },
+      "run": {
+        "samples_seconds": [
+          0.08295804215595126,
+          0.0835737083107233,
+          0.0845052502118051,
+          0.08238687505945563,
+          0.08325324999168515,
+          0.08450779179111123,
+          0.08328637480735779
+        ],
+        "median_seconds": 0.08328637480735779,
+        "min_seconds": 0.08238687505945563,
+        "max_seconds": 0.08450779179111123
+      },
+      "build_command": [
+        "mojo",
+        "build",
+        "-O3",
+        "{work}/mojo_5.mojo",
+        "-o",
+        "{work}/mojo-bin"
+      ],
+      "build_stderr": "Failed to initialize Crashpad.  Crash reporting will not be available.  Cause: while locating crashpad handler: unable to locate crashpad handler executable",
+      "output": "376378803"
+    },
+    "c": {
+      "build": {
+        "samples_seconds": [
+          0.131973790936172,
+          0.12845595879480243,
+          0.13874912541359663,
+          0.13684129109606147,
+          0.14144150028005242
+        ],
+        "median_seconds": 0.13684129109606147,
+        "min_seconds": 0.12845595879480243,
+        "max_seconds": 0.14144150028005242
+      },
+      "run": {
+        "samples_seconds": [
+          0.07775520859286189,
+          0.07751950016245246,
+          0.07828337512910366,
+          0.07732616597786546,
+          0.07777745788916945,
+          0.07818179065361619,
+          0.07938149990513921
+        ],
+        "median_seconds": 0.07777745788916945,
+        "min_seconds": 0.07732616597786546,
+        "max_seconds": 0.07938149990513921
+      },
+      "build_command": [
+        "clang",
+        "-std=c11",
+        "-O3",
+        "{work}/c_5.c",
+        "-o",
+        "{work}/c-bin"
+      ],
+      "build_stderr": "",
+      "output": "376378803"
+    },
+    "rust": {
+      "build": {
+        "samples_seconds": [
+          0.11408729199320078,
+          0.11318308301270008,
+          0.11960254097357392,
+          0.11570354178547859,
+          0.11044629197567701
+        ],
+        "median_seconds": 0.11408729199320078,
+        "min_seconds": 0.11044629197567701,
+        "max_seconds": 0.11960254097357392
+      },
+      "run": {
+        "samples_seconds": [
+          0.07736433297395706,
+          0.07745858421549201,
+          0.08015487529337406,
+          0.07856550021097064,
+          0.07980900024995208,
+          0.07806287473067641,
+          0.07829745765775442
+        ],
+        "median_seconds": 0.07829745765775442,
+        "min_seconds": 0.07736433297395706,
+        "max_seconds": 0.08015487529337406
+      },
+      "build_command": [
+        "rustc",
+        "-C",
+        "opt-level=3",
+        "{work}/rust_5.rs",
+        "-o",
+        "{work}/rust-bin"
+      ],
+      "build_stderr": "",
+      "output": "376378803"
+    },
+    "go": {
+      "build": {
+        "samples_seconds": [
+          0.1095414999872446,
+          0.11065933294594288,
+          0.11889000004157424,
+          0.10909925028681755,
+          0.11135087488219142
+        ],
+        "median_seconds": 0.11065933294594288,
+        "min_seconds": 0.10909925028681755,
+        "max_seconds": 0.11889000004157424
+      },
+      "run": {
+        "samples_seconds": [
+          0.09172087488695979,
+          0.09108420787379146,
+          0.09281741688027978,
+          0.09366424987092614,
+          0.0921635408885777,
+          0.0918569159694016,
+          0.09129191609099507
+        ],
+        "median_seconds": 0.0918569159694016,
+        "min_seconds": 0.09108420787379146,
+        "max_seconds": 0.09366424987092614
+      },
+      "build_command": [
+        "go",
+        "build",
+        "-o",
+        "{work}/go-bin",
+        "{work}/go_5.go"
+      ],
+      "build_stderr": "",
+      "output": "376378803"
+    },
+    "zig": {
+      "build": {
+        "samples_seconds": [
+          0.1038238750770688,
+          0.10366491694003344,
+          0.10597379179671407,
+          0.10489191580563784,
+          0.13429491687566042
+        ],
+        "median_seconds": 0.10489191580563784,
+        "min_seconds": 0.10366491694003344,
+        "max_seconds": 0.13429491687566042
+      },
+      "run": {
+        "samples_seconds": [
+          0.07852541608735919,
+          0.076107416767627,
+          0.07842691661790013,
+          0.07786933332681656,
+          0.07909841695800424,
+          0.0785309998318553,
+          0.08027516677975655
+        ],
+        "median_seconds": 0.07852541608735919,
+        "min_seconds": 0.076107416767627,
+        "max_seconds": 0.08027516677975655
+      },
+      "build_command": [
+        "zig",
+        "build-exe",
+        "{work}/zig_5.zig",
+        "-O",
+        "ReleaseFast",
+        "-lc",
+        "-fno-incremental",
+        "--cache-dir",
+        "{work}/zig-cache-5",
+        "-femit-bin={work}/zig-bin"
+      ],
+      "build_stderr": "",
+      "output": "376378803"
+    }
+  },
+  "method": {
+    "build_runs": 5,
+    "execution_runs": 7,
+    "warmups": 1,
+    "iterations": 50000000,
+    "expected_output": "376378803",
+    "builds": "Serial round-robin builds; fresh source name and comment per build; warm toolchains, standard libraries, and filesystem; fresh Zig local cache with incremental compilation off",
+    "optimization": "Mojo -O3, C -O3, Rust opt-level=3, Go defaults, Zig ReleaseFast",
+    "scope": "One native CPU scalar loop including process start and printing; GPU, allocation and large-project builds require separate measurements"
+  },
+  "machdep.cpu.brand_string": "Apple M4 Max",
+  "hw.memsize": "137438953472",
+  "hw.ncpu": "16"
+}

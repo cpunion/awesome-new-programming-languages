@@ -43,6 +43,7 @@ We are especially interested in program correctness, memory safety and efficienc
 ## Research and Experiments
 
 - [How far can Goose's memory model go?](research/beyond-goose.md) — A design exploration of inferred regions, checked deletable handles, whole-region transfer, and scoped immutable sharing, with explicit costs and validation targets. [中文](research/beyond-goose.zh-CN.md)
+- [Goose data-stack assignment checks](experiments/goose-stacks-2026-11-11/README.md) — Independent growth, reuse across scopes, result/scratch separation, and the distinction between last-use checks and owner reclamation. [Results](experiments/goose-stacks-2026-11-11/results.json)
 - [Memory safety, fewer allocations, and less ownership bookkeeping](research/memory-models.md) — A comparative study of the collected languages, with Koka/Perceus and Lean as research references. [中文](research/memory-models.zh-CN.md) · [Allocation and reuse checks](experiments/memory-models-2026-11-11/README.md)
 - [Bend behavior probes and integer-loop benchmark](experiments/bend-2026-11-11/run.py) — Reproducible checks and a C/Rust/Go/Zig comparison. [Results](experiments/bend-2026-11-11/results.json)
 - [Gojo safety probes and integer-loop benchmark](experiments/gojo-2026-11-11/run.py) — Ownership and runtime checks, bounds-analysis reports, and a C/Rust/Go/Zig comparison. [Results](experiments/gojo-2026-11-11/results.json)

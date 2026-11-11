@@ -1,0 +1,114 @@
+{
+  "measured_at": "2026-11-11T18:28:05.563858+08:00",
+  "source_commit": "f4637bfb342fb70d42bea0474eab9e62a3c99d68",
+  "host": "Darwin/arm64",
+  "scope": "Static data-stack report, native assertions, and checker diagnostics; no RSS, throughput, allocator-count, or complete safety measurement",
+  "tools": {
+    "goose": "goose f4637bf (runtime d521138194f1)",
+    "clang": "Homebrew clang version 22.1.8"
+  },
+  "positive": {
+    "simultaneous_containers": {
+      "source": "fn main() {\n    var a: i64[>..] = [];\n    var b: i64[>..] = [];\n    var c: i64[>..] = [];\n    a.push(1); b.push(2); c.push(3);\n    assert(a[0] + b[0] + c[0] == 6);\n}\n",
+      "data_stacks": 3,
+      "build": {
+        "exit_code": 0,
+        "stdout": "data stacks: 2 GB reserved per stack, 1 MB guard gap, 32 TB budget: 16376 regions, GS_MAX_STACKS 1024\nmain program: 3 data stacks + 0 global stacks = 3 regions\nthread cap: none, no workers\nfn main: 3 own, 3 with callees\nbuilt simultaneous_containers",
+        "stderr": "compiling the runtime for clang 22.1.8"
+      },
+      "execution": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "sequential_blocks": {
+      "source": "fn main() {\n    { var a: i64[>..] = []; a.push(1); assert(a[0] == 1); }\n    { var b: i64[>..] = []; b.push(2); assert(b[0] == 2); }\n    { var c: i64[>..] = []; c.push(3); assert(c[0] == 3); }\n}\n",
+      "data_stacks": 1,
+      "build": {
+        "exit_code": 0,
+        "stdout": "data stacks: 2 GB reserved per stack, 1 MB guard gap, 32 TB budget: 16376 regions, GS_MAX_STACKS 1024\nmain program: 1 data stacks + 0 global stacks = 1 regions\nthread cap: none, no workers\nfn main: 1 own, 1 with callees\nbuilt sequential_blocks",
+        "stderr": ""
+      },
+      "execution": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "sequential_uses_same_block": {
+      "source": "fn main() {\n    var a: i64[>..] = []; a.push(1); assert(a[0] == 1);\n    var b: i64[>..] = []; b.push(2); assert(b[0] == 2);\n    var c: i64[>..] = []; c.push(3); assert(c[0] == 3);\n}\n",
+      "data_stacks": 3,
+      "build": {
+        "exit_code": 0,
+        "stdout": "data stacks: 2 GB reserved per stack, 1 MB guard gap, 32 TB budget: 16376 regions, GS_MAX_STACKS 1024\nmain program: 3 data stacks + 0 global stacks = 3 regions\nthread cap: none, no workers\nfn main: 3 own, 3 with callees\nbuilt sequential_uses_same_block",
+        "stderr": ""
+      },
+      "execution": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "persistent_result_loop_scratch": {
+      "source": "fn main() {\n    var result: i64[>..] = [];\n    for round in 100 {\n        var scratch: i64[>..] = [];\n        for i in 10 { scratch.push(round + i); }\n        result.push(scratch[0]);\n    }\n    var sum: i64 = 0;\n    for x in result { sum += x; }\n    assert(result.len == 100 && sum == 4950);\n}\n",
+      "data_stacks": 2,
+      "build": {
+        "exit_code": 0,
+        "stdout": "data stacks: 2 GB reserved per stack, 1 MB guard gap, 32 TB budget: 16376 regions, GS_MAX_STACKS 1024\nmain program: 2 data stacks + 0 global stacks = 2 regions\nthread cap: none, no workers\nfn main: 2 own, 2 with callees\nbuilt persistent_result_loop_scratch",
+        "stderr": ""
+      },
+      "execution": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "result_destination_and_callee_scratch": {
+      "source": "fn make() -> i64[>..] {\n    var scratch: i64[>..] = [];\n    for i in 10 { scratch.push(i); }\n    return [scratch.len];\n}\nfn main() {\n    var result: i64[>..] = make();\n    assert(result[0] == 10);\n}\n",
+      "data_stacks": 2,
+      "build": {
+        "exit_code": 0,
+        "stdout": "data stacks: 2 GB reserved per stack, 1 MB guard gap, 32 TB budget: 16376 regions, GS_MAX_STACKS 1024\nmain program: 2 data stacks + 0 global stacks = 2 regions\nthread cap: none, no workers\nfn main: 2 own, 2 with callees\nbuilt result_destination_and_callee_scratch",
+        "stderr": ""
+      },
+      "execution": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "clear_after_reference_last_use": {
+      "source": "fn main() {\n    var xs: i64[>..] = [7];\n    let first .= xs[0];\n    assert(first == 7);\n    xs.clear();\n    assert(xs.len == 0);\n}\n",
+      "data_stacks": 1,
+      "build": {
+        "exit_code": 0,
+        "stdout": "data stacks: 2 GB reserved per stack, 1 MB guard gap, 32 TB budget: 16376 regions, GS_MAX_STACKS 1024\nmain program: 1 data stacks + 0 global stacks = 1 regions\nthread cap: none, no workers\nfn main: 1 own, 1 with callees\nbuilt clear_after_reference_last_use",
+        "stderr": ""
+      },
+      "execution": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  },
+  "negative": {
+    "escaping_view": {
+      "source": "fn main() {\n    var outer: u8[>..] = [];\n    var view = outer[..];\n    { var inner: u8[>..] = [1, 2]; view = inner[..]; }\n    print(view.len);\n}\n",
+      "diagnostic": {
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "escaping_view.goose:4: error: storing a reference rooted at inner, which does not outlive the destination (§9.2)\n    { var inner: u8[>..] = [1, 2]; view = inner[..]; }\n                                          ^~~~~~~~~\n  in fn main() instantiated from escaping_view.goose:1"
+      }
+    },
+    "clear_before_reference_last_use": {
+      "source": "fn main() {\n    var xs: i64[>..] = [7];\n    let first .= xs[0];\n    xs.clear();\n    print(first);\n}\n",
+      "diagnostic": {
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "clear_before_reference_last_use.goose:4: error: cannot clear xs while first is still used: it may hold a reference or slice into it (§5.1)\n    xs.clear();\n    ^~~~~~~~~~\n  in fn main() instantiated from clear_before_reference_last_use.goose:1"
+      }
+    }
+  }
+}

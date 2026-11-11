@@ -43,6 +43,7 @@
 ## 研究与实验
 
 - [Goose 的内存模型还能推进多远？](research/beyond-goose.zh-CN.md) — 探索自动区域、可验证的删除句柄、整块转移与有界不可变共享，并明确代价和验证目标。[English](research/beyond-goose.md)
+- [Goose 数据栈分配检查](experiments/goose-stacks-2026-11-11/README.md) — 验证独立增长、跨作用域复用、结果与临时数据分离，以及最后使用检查与拥有者回收的区别。[实验结果](experiments/goose-stacks-2026-11-11/results.json)
 - [内存安全、减少分配与降低所有权管理负担](research/memory-models.zh-CN.md) — 比较已收录语言，并以 Koka／Perceus 和 Lean 作为研究参照。[English](research/memory-models.md) · [分配与复用检查](experiments/memory-models-2026-11-11/README.md)
 - [Bend 行为探针与整数循环基准](experiments/bend-2026-11-11/run.py) — 可复现的机制检查，以及 C／Rust／Go／Zig 对照。[实验结果](experiments/bend-2026-11-11/results.json)
 - [Gojo 安全探针与整数循环基准](experiments/gojo-2026-11-11/run.py) — 所有权与运行时检查、边界分析报告，以及 C／Rust／Go／Zig 对照。[实验结果](experiments/gojo-2026-11-11/results.json)

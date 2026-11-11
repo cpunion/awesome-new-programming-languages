@@ -1,0 +1,1136 @@
+{
+  "measured_at": "2026-11-11T10:51:41.019194+08:00",
+  "gojo_commit": "215e07c8f016203c52a68e91db9d7097e8e4ff4b",
+  "gojo_version": "gojo 0.0.1 (215e07c8f0, aarch64-apple-darwin)",
+  "tools": {
+    "clang": "Homebrew clang version 22.1.8",
+    "rustc": "rustc 1.95.0-nightly (eda76d9d1 2026-01-21)",
+    "go": "go version go1.27.3 darwin/arm64",
+    "zig": "0.16.0",
+    "git": "git version 2.55.0"
+  },
+  "method": {
+    "build_runs": 5,
+    "execution_runs": 7,
+    "warmups": 1,
+    "iterations": 50000000,
+    "expected_output": "376378803",
+    "cache": "Fresh experiment cache; record first Gojo build separately, keep its compiled runtime warm, remove bin_* artifacts before each timed Gojo build; warm standard libraries; fresh source per build and Zig local cache per build",
+    "timing": "Serial round-robin wall time including process start; Gojo release uses clang -O2, C -O3, Rust opt-level=3, Go default, Zig ReleaseFast; GOJO_MAXPROCS=1",
+    "scope": "One integer loop; allocation, GPU, application workloads and large-project builds need separate measurements"
+  },
+  "probes": {
+    "no_nil": {
+      "seconds": 0.014618291985243559,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: variable `a` is declared but never used\n  --> {gojo}/tests/errors/no_nil.gojo:3:9\n  3 |     let a = nil\n    |         ^\n  = note: prefix it with `_` if this is intentional\nerror: undefined: `nil`\n  --> {gojo}/tests/errors/no_nil.gojo:3:13\n  3 |     let a = nil\n    |             ^^^\n  = note: Gojo has no nil; optional values are written `?T` and the empty value is `none`\nerror: variable `b` is declared but never used\n  --> {gojo}/tests/errors/no_nil.gojo:4:9\n  4 |     let b: int = none\n    |         ^\n  = note: prefix it with `_` if this is intentional\nerror: `none` is not a value of type `int`; only `?T` values can be none\n  --> {gojo}/tests/errors/no_nil.gojo:4:18\n  4 |     let b: int = none\n    |                  ^^^^\n4 errors found",
+      "matches_expectation": true
+    },
+    "move_in_loop": {
+      "seconds": 0.016060458030551672,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: use of `s` after it was moved\n  --> {gojo}/tests/errors/move_in_loop.gojo:5:14\n  5 |         take(s)\n    |              ^\n  note: it was moved here in a previous iteration of the loop ({gojo}/tests/errors/move_in_loop.gojo:5:14)\n  5 |         take(s)\n    |              ^\n  = note: use `.clone()` before moving if you need the value again\n1 error found",
+      "matches_expectation": true
+    },
+    "maybe_moved": {
+      "seconds": 0.015055458061397076,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: use of `s` after it was moved\n  --> {gojo}/tests/errors/maybe_moved.gojo:7:13\n  7 |     println(s)\n    |             ^\n  note: moved here ({gojo}/tests/errors/maybe_moved.gojo:5:14)\n  5 |         take(s)\n    |              ^\n  = note: use `.clone()` before moving if you need the value again\n1 error found",
+      "matches_expectation": true
+    },
+    "move_while_borrowed": {
+      "seconds": 0.01609016628935933,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: use of `v` after it was moved\n  --> {gojo}/tests/errors/move_while_borrowed.gojo:5:14\n  5 |         take(v)\n    |              ^\n  note: it was moved here in a previous iteration of the loop ({gojo}/tests/errors/move_while_borrowed.gojo:5:14)\n  5 |         take(v)\n    |              ^\n  = note: use `.clone()` before moving if you need the value again\nerror: cannot move `v` while it is borrowed\n  --> {gojo}/tests/errors/move_while_borrowed.gojo:5:14\n  5 |         take(v)\n    |              ^\n  note: borrowed here ({gojo}/tests/errors/move_while_borrowed.gojo:4:14)\n  4 |     for x in v {\n    |              ^\n2 errors found",
+      "matches_expectation": true
+    },
+    "unhandled_result": {
+      "seconds": 0.01470341719686985,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: result of type `! String` is not handled\n  --> {gojo}/tests/errors/unhandled_result.gojo:7:5\n  7 |     check(1)\n    |     ^^^^^^^^\n  = note: handle it with `try`, `catch` or `match`, or discard it explicitly with `_ = ...`\n1 error found",
+      "matches_expectation": true
+    },
+    "non_exhaustive": {
+      "seconds": 0.015423082746565342,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: `match` is not exhaustive: `Rect(_, _)` is not covered\n  --> {gojo}/tests/errors/non_exhaustive.gojo:3:12\n  3 |     return match s {\n    |            ^^^^^^^^^\n  = note: add an arm for it, or a catch-all `_ => ...`\nerror: `match` is not exhaustive: `some(_)` is not covered\n  --> {gojo}/tests/errors/non_exhaustive.gojo:10:12\n  10 |     return match o {\n     |            ^^^^^^^^^\n  = note: add an arm for it, or a catch-all `_ => ...`\n2 errors found",
+      "matches_expectation": true
+    },
+    "task_race": {
+      "seconds": 0.015199458226561546,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: a task started in an earlier iteration of this loop modifies `total`, and may still be running\n  --> {gojo}/tests/errors/task_race.gojo:6:16\n  6 |             go () => {\n    |                ^^^^^^^\n  note: the task ({gojo}/tests/errors/task_race.gojo:6:16)\n  6 |             go () => {\n    |                ^^^^^^^\n  = note: tasks keep what they borrow until their `scope` ends; give each task its own data, collect results with `let t = go f()` and `t.join()`, or share it through a `Mutex`\n1 error found",
+      "matches_expectation": true
+    },
+    "linear_leaks": {
+      "seconds": 0.016082458198070526,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: `_tx` is not consumed: the linear `Tx` would be dropped where its block ends\n  --> {gojo}/tests/errors/linear_leaks.gojo:18:9\n  18 |     let _tx = begin(1)\n     |         ^^^\n  note: where its block ends ({gojo}/tests/errors/linear_leaks.gojo:19:1)\n  19 | }\n     | ^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: `tx` may not be consumed on every path: the linear `Tx` would be dropped where its block ends\n  --> {gojo}/tests/errors/linear_leaks.gojo:21:9\n  21 |     let tx = begin(1)\n     |         ^^\n  note: where its block ends ({gojo}/tests/errors/linear_leaks.gojo:25:1)\n  25 | }\n     | ^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: this linear `Tx` is thrown away\n  --> {gojo}/tests/errors/linear_leaks.gojo:27:5\n  27 |     begin(1)\n     |     ^^^^^^^^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: this linear `Tx` is thrown away\n  --> {gojo}/tests/errors/linear_leaks.gojo:28:9\n  28 |     _ = begin(2)\n     |         ^^^^^^^^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: this linear `Tx` is dropped at the end of the statement: it is only borrowed here\n  --> {gojo}/tests/errors/linear_leaks.gojo:29:13\n  29 |     println(begin(3).id)\n     |             ^^^^^^^^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: `tx` is not consumed: the linear `Tx` would be dropped by this `return`\n  --> {gojo}/tests/errors/linear_leaks.gojo:34:9\n  34 |         return 1\n     |         ^^^^^^^^\n  note: `tx` is declared here ({gojo}/tests/errors/linear_leaks.gojo:32:9)\n  32 |     let tx = begin(1)\n     |         ^^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: assigning to `tx` drops the linear `Tx` it still holds\n  --> {gojo}/tests/errors/linear_leaks.gojo:41:5\n  41 |     tx = begin(2)\n     |     ^^^^^^^^^^^^^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: a closure can't capture the linear `tx`: the closure could be dropped, or called twice\n  --> {gojo}/tests/errors/linear_leaks.gojo:46:13\n  46 |     let f = () => println(tx.id)\n     |             ^^^^^^^^^^^^^^^^^^^^\n  note: `tx` is declared here ({gojo}/tests/errors/linear_leaks.gojo:45:9)\n  45 |     let tx = begin(1)\n     |         ^^\n  = note: pass it to a function as a `sink` argument instead (`go finish(tx)` hands it to a task)\nerror: use of `tx` after it was moved\n  --> {gojo}/tests/errors/linear_leaks.gojo:48:5\n  48 |     tx.commit()\n     |     ^^\n  note: moved here ({gojo}/tests/errors/linear_leaks.gojo:46:13)\n  46 |     let f = () => println(tx.id)\n     |             ^^^^^^^^^^^^^^^^^^^^\n  = note: use `.clone()` before moving if you need the value again\nerror: `Rc[Tx]` would drop the linear `Tx` it holds\n  --> {gojo}/tests/errors/linear_leaks.gojo:51:9\n  51 |     let r: Rc[Tx] = Rc(begin(1))\n     |         ^\n  = note: linear values can be held by structs and enums declared `linear`, `Vec`, `?T`, results and tuples, which are consumed in turn\nerror: `r` is not consumed: the linear `Rc[Tx]` would be dropped where its block ends\n  --> {gojo}/tests/errors/linear_leaks.gojo:51:9\n  51 |     let r: Rc[Tx] = Rc(begin(1))\n     |         ^\n  note: where its block ends ({gojo}/tests/errors/linear_leaks.gojo:57:1)\n  57 | }\n     | ^\n  = note: `Rc[Tx]` is linear: move it into a `sink` parameter, return it, or store it in something that is consumed\nerror: `drop` may drop its `T` values, and `Tx` is linear\n  --> {gojo}/tests/errors/linear_leaks.gojo:53:5\n  53 |     drop(begin(2))\n     |     ^^^^^^^^^^^^^^\n  note: only a type parameter declared `any` (`[T: any]` or `where T: any`) takes linear types (<std>/prelude.gojo:169:8)\n  169 | pub fn drop[T](x: sink T) {}\n      |        ^^^^\nerror: `v` is not consumed: the linear `Vec[Tx]` would be dropped where its block ends\n  --> {gojo}/tests/errors/linear_leaks.gojo:54:9\n  54 |     var v: Vec[Tx] = []\n     |         ^\n  note: where its block ends ({gojo}/tests/errors/linear_leaks.gojo:57:1)\n  57 | }\n     | ^\n  = note: `Tx` is linear: pop each element and call `commit` or `rollback`\nerror: `clear` may drop its `T` values, and `Tx` is linear\n  --> {gojo}/tests/errors/linear_leaks.gojo:56:5\n  56 |     v.clear()\n     |     ^^^^^^^^^\n  note: only a type parameter declared `any` (`[T: any]` or `where T: any`) takes linear types (<std>/prelude.gojo:1747:12)\n  1747 |     pub fn clear(inout self)\n       |            ^^^^^\nerror: `t` is not consumed: the linear `Tx` would be dropped where the function ends\n  --> {gojo}/tests/errors/linear_leaks.gojo:58:10\n  58 | fn leak8(t: sink Tx) {\n     |          ^\n  note: where the function ends ({gojo}/tests/errors/linear_leaks.gojo:60:1)\n  60 | }\n     | ^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: `tx` is not consumed: the linear `Tx` would be dropped by this `continue`\n  --> {gojo}/tests/errors/linear_leaks.gojo:65:13\n  65 |             continue\n     |             ^^^^^^^^\n  note: `tx` is declared here ({gojo}/tests/errors/linear_leaks.gojo:63:13)\n  63 |         let tx = begin(i)\n     |             ^^\n  = note: `Tx` is linear: call `commit` or `rollback`\nerror: `tx` is not consumed: the linear `Tx` would be dropped when this `try` returns the error\n  --> {gojo}/tests/errors/linear_leaks.gojo:72:13\n  72 |     let n = try parse()\n     |             ^^^^^^^^^^^\n  note: `tx` is declared here ({gojo}/tests/errors/linear_leaks.gojo:71:9)\n  71 |     let tx = begin(1)\n     |         ^^\n  = note: `Tx` is linear: call `commit` or `rollback`\n17 errors found",
+      "matches_expectation": true
+    },
+    "ownership": {
+      "seconds": 2.560520499944687,
+      "exit_code": 0,
+      "stdout": "peek b\ninner defer\ndrop b\npeek a\npeek c\ndrop c\ndeferred in scopes\ndrop a\nconsume x\ndrop x\nend of pick true\nend of pick false\ndrop x\ndrop guard\nearly 1\npeek guard\ndrop guard\nearly 0\npeek loop 0\ndrop loop 0\ndrop loop 1\npeek loop 2\ndrop loop 2\ndrop pb\npeek pa\npopped true\ndrop s1\n[\"x\", \"y\"] [\"x\", \"y\"]\ndrop s2\nmain end\ndrop v2\ndrop v1\ndrop pa",
+      "stderr": "",
+      "matches_expectation": true
+    },
+    "lastuse": {
+      "seconds": 0.49589050002396107,
+      "exit_code": 0,
+      "stdout": "4\n1 some(2)\ngojo! [1, 2, 3, 4]",
+      "stderr": "",
+      "matches_expectation": true
+    },
+    "linear": {
+      "seconds": 0.4871956668794155,
+      "exit_code": 0,
+      "stdout": "commit 6\nrollback 6\n8\n9\ncommit 7\ncommit 8\ncommit 108\ncommit 9\ncommit 10\nempty\ncommit 11\nrollback 12\ncommit 13\ncommit 14\ncommit 15\ncommit 21\ncommit 20\ncommit 30\n30\n-1\nrollback 31\ncommit 30\ncommit 40\n30\nrollback 40\n-1\ncommit 51\nrollback 50\ncommit 52\ncommit 53\nx\ncommit 54\ncommit 56\ncommit 60\nrollback 61\ncommit 70\nrollback 71\ncommit 80\nrollback 81",
+      "stderr": "",
+      "matches_expectation": true
+    },
+    "drop_states": {
+      "seconds": 0.5025149160064757,
+      "exit_code": 0,
+      "stdout": "eat a\ndrop a\nend of observable(true)\ndrop b\nend of observable(false)\ndrop b\ndrop a\n9 14\n5 2\n5 7\nreturned none\n6 106\n7 0\n16 1\n4\n6 -1\n1 2\n3 0\n0 6\n1 1\n2000 2000 53 2000 6000\ndeferred 1000\n2000 1000\npeek 51\n1000",
+      "stderr": "",
+      "matches_expectation": true
+    },
+    "overflow": {
+      "seconds": 0.4456844995729625,
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "panic: integer overflow in addition\n    at {gojo}/tests/panic/overflow.gojo:4:9",
+      "matches_expectation": true
+    },
+    "bounds": {
+      "seconds": 0.45683212485164404,
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "panic: index out of range: index 3, length 3\n    at {gojo}/tests/panic/bounds.gojo:4:13",
+      "matches_expectation": true
+    },
+    "requires": {
+      "seconds": 0.4626205828972161,
+      "exit_code": 2,
+      "stdout": "9",
+      "stderr": "panic: precondition of `window` failed\n    at {gojo}/tests/panic/requires.gojo:3:14",
+      "matches_expectation": true
+    }
+  },
+  "benchmark": {
+    "gojo": {
+      "build": {
+        "samples_seconds": [
+          0.1709019159898162,
+          0.17941850004717708,
+          0.1816724999807775,
+          0.17165245860815048,
+          0.17173658264800906
+        ],
+        "median_seconds": 0.17173658264800906,
+        "min_seconds": 0.1709019159898162,
+        "max_seconds": 0.1816724999807775
+      },
+      "run": {
+        "samples_seconds": [
+          0.07616962492465973,
+          0.07547837495803833,
+          0.07615770818665624,
+          0.07722983323037624,
+          0.07524183299392462,
+          0.07955562509596348,
+          0.07576275011524558
+        ],
+        "median_seconds": 0.07615770818665624,
+        "min_seconds": 0.07524183299392462,
+        "max_seconds": 0.07955562509596348
+      },
+      "build_command": [
+        "gojo",
+        "build",
+        "--release",
+        "--cc",
+        "/opt/homebrew/bin/clang",
+        "{work}/gojo_5.gojo",
+        "-o",
+        "{work}/gojo-bin"
+      ],
+      "output": "376378803"
+    },
+    "c": {
+      "build": {
+        "samples_seconds": [
+          0.13700220780447125,
+          0.14002362499013543,
+          0.13519199984148145,
+          0.12993195792660117,
+          0.1344802500680089
+        ],
+        "median_seconds": 0.13519199984148145,
+        "min_seconds": 0.12993195792660117,
+        "max_seconds": 0.14002362499013543
+      },
+      "run": {
+        "samples_seconds": [
+          0.07512216689065099,
+          0.074261958245188,
+          0.07525920774787664,
+          0.07762683322653174,
+          0.0756862498819828,
+          0.0762001657858491,
+          0.0739795002155006
+        ],
+        "median_seconds": 0.07525920774787664,
+        "min_seconds": 0.0739795002155006,
+        "max_seconds": 0.07762683322653174
+      },
+      "build_command": [
+        "clang",
+        "-std=c11",
+        "-O3",
+        "{work}/c_5.c",
+        "-o",
+        "{work}/c-bin"
+      ],
+      "output": "376378803"
+    },
+    "rust": {
+      "build": {
+        "samples_seconds": [
+          0.11111120833083987,
+          0.11164691625162959,
+          0.10925904102623463,
+          0.11474558291956782,
+          0.11437579058110714
+        ],
+        "median_seconds": 0.11164691625162959,
+        "min_seconds": 0.10925904102623463,
+        "max_seconds": 0.11474558291956782
+      },
+      "run": {
+        "samples_seconds": [
+          0.07496295869350433,
+          0.07506654085591435,
+          0.07524720812216401,
+          0.07557624997571111,
+          0.07685995800420642,
+          0.0744857918471098,
+          0.07368241716176271
+        ],
+        "median_seconds": 0.07506654085591435,
+        "min_seconds": 0.07368241716176271,
+        "max_seconds": 0.07685995800420642
+      },
+      "build_command": [
+        "rustc",
+        "-C",
+        "opt-level=3",
+        "{work}/rust_5.rs",
+        "-o",
+        "{work}/rust-bin"
+      ],
+      "output": "376378803"
+    },
+    "go": {
+      "build": {
+        "samples_seconds": [
+          0.11019754223525524,
+          0.11033208388835192,
+          0.11090683285146952,
+          0.10970937460660934,
+          0.11027212487533689
+        ],
+        "median_seconds": 0.11027212487533689,
+        "min_seconds": 0.10970937460660934,
+        "max_seconds": 0.11090683285146952
+      },
+      "run": {
+        "samples_seconds": [
+          0.08766583306714892,
+          0.09092979179695249,
+          0.08762720786035061,
+          0.0883078332990408,
+          0.08824287494644523,
+          0.0882022911682725,
+          0.0943473749794066
+        ],
+        "median_seconds": 0.08824287494644523,
+        "min_seconds": 0.08762720786035061,
+        "max_seconds": 0.0943473749794066
+      },
+      "build_command": [
+        "go",
+        "build",
+        "-o",
+        "{work}/go-bin",
+        "{work}/go_5.go"
+      ],
+      "output": "376378803"
+    },
+    "zig": {
+      "build": {
+        "samples_seconds": [
+          0.10291637480258942,
+          0.10341516742482781,
+          0.11014337465167046,
+          0.1036495422013104,
+          0.10499979229643941
+        ],
+        "median_seconds": 0.1036495422013104,
+        "min_seconds": 0.10291637480258942,
+        "max_seconds": 0.11014337465167046
+      },
+      "run": {
+        "samples_seconds": [
+          0.07585950009524822,
+          0.0748081668280065,
+          0.0792266670614481,
+          0.07717329123988748,
+          0.07488841703161597,
+          0.0757481250911951,
+          0.07955275010317564
+        ],
+        "median_seconds": 0.07585950009524822,
+        "min_seconds": 0.0748081668280065,
+        "max_seconds": 0.07955275010317564
+      },
+      "build_command": [
+        "zig",
+        "build-exe",
+        "{work}/zig_5.zig",
+        "-O",
+        "ReleaseFast",
+        "-lc",
+        "-fno-incremental",
+        "--cache-dir",
+        "{work}/zig-cache-5",
+        "-femit-bin={work}/zig-bin"
+      ],
+      "output": "376378803"
+    }
+  },
+  "machdep.cpu.brand_string": "Apple M4 Max",
+  "hw.memsize": "137438953472",
+  "hw.ncpu": "16",
+  "bounds_claims": {
+    "functions": [
+      {
+        "function": "sum",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 41,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 44,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 47,
+            "column": 21
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "sumVec",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 52,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 55,
+            "column": 21
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "double",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 60,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 62,
+            "column": 16
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 62,
+            "column": 9
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 63,
+            "column": 15
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "neighbours",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 67,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 70,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 70,
+            "column": 21
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 73,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 73,
+            "column": 21
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 76,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 76,
+            "column": 25
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "pairs",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 81,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 85,
+            "column": 16
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 85,
+            "column": 23
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 90,
+            "column": 18
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "fields",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 96,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 99,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 102,
+            "column": 9
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 106,
+            "column": 14
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "indexed",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 111,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 114,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 117,
+            "column": 14
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 119,
+            "column": 17
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 120,
+            "column": 18
+          }
+        ]
+      },
+      {
+        "function": "bytes",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 125,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 128,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 131,
+            "column": 18
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "arrays",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 136,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 138,
+            "column": 13
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 138,
+            "column": 20
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 138,
+            "column": 31
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 140,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 143,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 145,
+            "column": 5
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 146,
+            "column": 10
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 146,
+            "column": 23
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 146,
+            "column": 35
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 148,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 150,
+            "column": 10
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 151,
+            "column": 31
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 140,
+            "column": 21
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 151,
+            "column": 10
+          }
+        ]
+      },
+      {
+        "function": "sized",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 155,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 158,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 161,
+            "column": 14
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "slices",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 166,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 169,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 169,
+            "column": 27
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 169,
+            "column": 40
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 172,
+            "column": 10
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 172,
+            "column": 24
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 172,
+            "column": 36
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 169,
+            "column": 40
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 172,
+            "column": 36
+          }
+        ]
+      },
+      {
+        "function": "readers",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 176,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 180,
+            "column": 14
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 179,
+            "column": 29
+          }
+        ]
+      },
+      {
+        "function": "hoisted",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 185,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 191,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 191,
+            "column": 25
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 195,
+            "column": 9
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 200,
+            "column": 16
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 200,
+            "column": 23
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 200,
+            "column": 33
+          }
+        ]
+      },
+      {
+        "function": "hoistedThenGrown",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 203,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 207,
+            "column": 14
+          }
+        ]
+      },
+      {
+        "function": "changes",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 215,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 219,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 225,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 228,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 235,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 238,
+            "column": 14
+          }
+        ]
+      },
+      {
+        "function": "unknown",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 244,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 251,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 257,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 262,
+            "column": 18
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 247,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 254,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 268,
+            "column": 18
+          }
+        ]
+      },
+      {
+        "function": "lengths",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 275,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 280,
+            "column": 10
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 280,
+            "column": 27
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 283,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 288,
+            "column": 10
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 281,
+            "column": 10
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 289,
+            "column": 10
+          }
+        ]
+      },
+      {
+        "function": "elseIf",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 295,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 300,
+            "column": 16
+          }
+        ]
+      },
+      {
+        "function": "blockValue",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 305,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 308,
+            "column": 24
+          }
+        ]
+      },
+      {
+        "function": "deferred",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 323,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 327,
+            "column": 12
+          }
+        ]
+      },
+      {
+        "function": "nestedExit",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 332,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 345,
+            "column": 12
+          }
+        ]
+      },
+      {
+        "function": "shrunk",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 349,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 352,
+            "column": 16
+          }
+        ]
+      },
+      {
+        "function": "guards",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 358,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 363,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 368,
+            "column": 24
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 377,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 384,
+            "column": 10
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 408,
+            "column": 10
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 411,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 414,
+            "column": 14
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 375,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 389,
+            "column": 18
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 396,
+            "column": 14
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 405,
+            "column": 10
+          }
+        ]
+      },
+      {
+        "function": "grown",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 426,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 429,
+            "column": 16
+          }
+        ]
+      },
+      {
+        "function": "Cursor.peek",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 439,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 441,
+            "column": 20
+          }
+        ],
+        "kept": []
+      },
+      {
+        "function": "Cursor.skip",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 448,
+        "checkfree": false,
+        "removed": [],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 449,
+            "column": 42
+          }
+        ]
+      },
+      {
+        "function": "main",
+        "file": "{gojo}/tests/run/bce.gojo",
+        "line": 455,
+        "checkfree": false,
+        "removed": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 457,
+            "column": 17
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 457,
+            "column": 47
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 457,
+            "column": 61
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 466,
+            "column": 20
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 470,
+            "column": 21
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 471,
+            "column": 21
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 472,
+            "column": 20
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 472,
+            "column": 52
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 475,
+            "column": 21
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 475,
+            "column": 32
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 475,
+            "column": 65
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 478,
+            "column": 20
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 478,
+            "column": 42
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 478,
+            "column": 62
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 478,
+            "column": 104
+          }
+        ],
+        "kept": [
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 470,
+            "column": 28
+          },
+          {
+            "file": "{gojo}/tests/run/bce.gojo",
+            "line": 475,
+            "column": 53
+          }
+        ]
+      }
+    ]
+  },
+  "first_gojo_release_build": {
+    "seconds": 2.021372332703322,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

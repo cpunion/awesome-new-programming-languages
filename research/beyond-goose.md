@@ -1,0 +1,68 @@
+# How far can Goose's memory model go?
+
+English | [简体中文](beyond-goose.zh-CN.md)
+
+Research date: 2026-11-11. **This is a design proposal, not a description of implemented Goose features or a proven new language.** The starting point is Goose's storage model at `32a4f445d8a94b22874a28469f95f69ba3ac31dd` and our [memory-model experiments](../experiments/memory-models-2026-11-11/README.md). No additional performance experiment was run for this proposal.
+
+There is substantial room to extend this approach. The useful objective is to make memory-safe, low-allocation programs easy to write, with most ownership reasoning handled by the compiler. A promising direction is **inferred regions, unrestricted internal graph structure within checked access rules, and explicit transitions at region boundaries**. It cannot promise optimal allocation, arbitrary sharing, immediate reclamation, and no source-level choices for every program.
+
+## Preserve the inexpensive common case
+
+Goose already combines inferred roots, destination construction, inline variable-size data, stable references during growth, and scope-based reclamation. Its default path avoids per-object reference counting. Preserve those properties for request data, parsed documents, compiler passes, and other data with a common lifetime. The prior experiment demonstrated no direct allocator calls inside a marked record-building interval; it did not demonstrate zero storage consumption or zero operating-system work. [Goose reference](https://github.com/aardappel/goose/blob/32a4f445d8a94b22874a28469f95f69ba3ac31dd/docs/reference.md#4-where-values-live)
+
+The main unit of storage ownership should be a request, document, graph, task, or other region. Inside a region, allow multiple references and cycles when the operations preserve their validity. Region ownership does not require every graph edge to be an ownership edge. Reclaiming a whole region does not need to discover which internal nodes point to one another.
+
+## Infer placement, but make retention visible
+
+Infer the smallest region the analysis can justify, construct function results directly at their destination, and keep temporary work in short-lived subregions. A returned small result should not silently retain a large scratch region. For example, extracting one token from a large input creates a real choice: retain the input behind a view, or copy the token into longer-lived storage. Preserve the distinction between a view and an owned value; automatic promotion must not silently change aliasing semantics.
+
+When inference is conservative, report the lifetime boundary that caused retention. Offer an explicit destination, copy, or region split. Do not silently merge everything into a process-lifetime arena. Region profiles should explain retained bytes and the reference or API contract responsible. Region inference and profiling have prior art in MLKit; its documentation also notes that tracing collection can improve memory behavior, so inference alone should not be presented as a complete reclamation solution. [MLKit](https://github.com/melsman/mlkit)
+
+## Give deletable objects checked identities
+
+Goose's current pool keeps slots alive and well-typed after `free`; a reference can subsequently observe a replacement object. That preserves the documented memory-safety properties while leaving an application identity problem. [Pool semantics](https://github.com/aardappel/goose/blob/32a4f445d8a94b22874a28469f95f69ba3ac31dd/docs/tutorial.md#11-lifetimes-that-do-not-nest)
+
+For a deletable pool, propose a distinct handle carrying or statically proving the pool identity, plus a slot and generation. Lookup returns a short-lived checked view or an absent/error result. Deleting and reusing a slot must invalidate old handles. Region destruction must also make lookup fail safely; checking a generation by dereferencing an already-freed region would be unsound. Generation and region-identity reuse need a specified overflow policy, such as retiring exhausted identities, rather than a probability claim.
+
+The view matters as much as the handle: after successful lookup, deletion, compaction, callbacks, or task suspension must not invalidate that view. A first implementation can prohibit invalidating operations on the pool while such views are live, using inferred effects and liveness. Check once per stable access interval when provable; otherwise retain the checks. This is a restricted borrowing rule at the deletion boundary, not elimination of borrowing as a concept.
+
+Versioned slots are established technology. Rust's slotmap documents both version checking and its wraparound limitation; it also documents the need to distinguish pools. The proposed stronger identity contract must cover both. These handles cost metadata, checks, and sometimes indirection. They do not reclaim unreachable objects automatically: application code still decides when an entity is deleted, while the runtime handles storage safely. Cycles disappear on region destruction; otherwise-unreachable cycles inside a long-lived region can remain. [slotmap documentation](https://docs.rs/slotmap/latest/slotmap/)
+
+## Extend storage without hiding its tradeoffs
+
+Support a small number of explicit container semantics: packed sequential records, packed records with an offset index, and individually editable/deletable slots. Generate their indexing and bookkeeping. Adding an index enables constant-time lookup for variable-size records but consumes metadata; growing a record in the middle still requires relocation, spare capacity, or indirection. A compiler cannot promise all layouts' advantages simultaneously.
+
+A segmented region backend can support targets that cannot afford Goose-style large address reservations. Stable chunks preserve addresses of existing elements, but one flat contiguous slice across chunks is no longer free. Expose that distinction at contiguous-buffer and FFI boundaries. Handle-backed storage can compact only while no physical views are live. Releasing empty chunks requires allocation metadata and a strategy for partial occupancy; reusing slots alone does not imply lower RSS.
+
+Permit dynamic activation regions for recursion, backed by a reusable chunk pool. This could remove the requirement that every live growable local fit a statically assigned set of data stacks. It adds region descriptors, chunk acquisition and depth-dependent memory use. It must handle exhaustion safely. Escaping closures can use region-owned environments and lifetime/effect summaries; runtime function pointers are not inherently incompatible with safety. Both extensions require new checking rules and implementation work.
+
+## Transfer regions and share frozen regions
+
+Keep mutable state confined to one worker, then add two checked boundary operations:
+
+- **Transfer:** move authority over a closed region to another worker. Internal cycles and aliases may stay; the sender must retain no usable access, and outgoing references must be proven safe for the receiver. A same-process implementation may transfer a region descriptor without copying its data. Messaging and synchronization still cost time, and cross-process or GPU transfers need separate treatment.
+- **Freeze and scoped sharing:** eliminate mutable access to a region, share it with structured child tasks, and reclaim or regain mutation only after all readers have finished. A read-only view alone is insufficient; all possible mutable aliases must be accounted for. Joining children gives a lifetime boundary without per-object reference counting.
+
+Unbounded asynchronous sharing needs an additional lifetime mechanism: a supervising owner, explicit release protocol, region-level reference counting, or another reclamation strategy. A strict no-RC/no-tracing core should reject unsupported escapes rather than silently insert a new collector. It will retain boundary choices such as transfer and freeze, although these apply to whole graphs rather than each node.
+
+This direction has prior art: Verona explicitly investigates replacing per-object linearity with linear regions, and Pony's recovery/capability rules address isolation and immutable sharing. Neither is evidence that this proposal is already implemented, novel, or free of runtime management. Verona's FAQ explicitly includes runtime reference counting. [Verona research questions](https://microsoft.github.io/verona/faq.html) · [Pony recovery](https://tutorial.ponylang.io/reference-capabilities/recovering-capabilities.html)
+
+## Make costs and contracts part of the design
+
+Separate compilation should exchange compact summaries of returned roots, region dependencies, invalidating effects, and allocation behavior. Use bounded analyses, cached summaries, and conservative errors instead of relying on unlimited whole-program specialization or theorem proving. This is a route to investigate for Go/Zig-like development speed, not a compilation-speed result.
+
+Metaprogramming should generate typed code, layouts, serializers, and indexes that pass the same checks. It must not manufacture reference-validity proofs or bypass the runtime's identity checks. Layout stability needs an explicit contract for FFI and persistence; automatic optimization cannot silently alter an exported ABI.
+
+Allocation contracts must distinguish logical value construction, region storage growth, backing allocator calls, and OS page commitment. A contract violation should fail compilation when enforcement is promised; a warning is not a guarantee. Cost reports should show inferred regions, copies, checks, and retained data. The compiler cannot statically predict all input-dependent RSS or scheduling behavior.
+
+Memory reclamation and external resource cleanup are separate. Closing a million files or cancelling outstanding operations requires real work, even if reclaiming their data storage is a pointer reset. Scoped resource management can automate that work, but its ordering, error behavior, cancellation, and cost need a specification. Foreign code that retains borrowed pointers or mutates supposedly frozen data remains a trust boundary.
+
+## What would count as a breakthrough?
+
+The candidate contribution is the combination of **low source-level bookkeeping, compositional safety checking, and predictable costs** across storage, deletion, and concurrency. Individual components already exist. A new syntax or a bump allocator alone would not establish a research breakthrough.
+
+A useful first prototype would implement inferred request regions, destination construction, and checked deletable pools, followed by whole-region transfer and scoped immutable sharing. Specify preservation of reference validity, stale-handle rejection, and exclusion of conflicting cross-thread access. Test counterexamples as well as normal programs: deletion through an alias during a checked view, cross-pool handles, generation exhaustion, references escaping to closures, cancellation before readers finish, and transfers with hidden aliases.
+
+Measure at least a request/parser pipeline, a long-running graph with arbitrary deletions, and a multi-worker pipeline. Add deeply recursive builders and variable-size indexed records. Compare with carefully implemented C/Rust arenas and pools, Goose, and representative automatic-memory implementations. Report allocator requests, bytes retained, peak RSS, metadata, copies, checks, throughput, tail latency, and clean/incremental build times. Count annotations and restructuring needed to make the programs safe. No performance or ergonomics target has yet been established by this proposal.
+
+The promising outcome is a language in which routine data processing needs little ownership syntax, while the few operations that change lifetime or sharing have clear contracts. Programs with arbitrary long-lived shared mutable graphs would still face checks, retention, explicit deletion decisions, or additional reclamation machinery.

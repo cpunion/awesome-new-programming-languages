@@ -1,0 +1,279 @@
+{
+  "measured_at": "2026-11-11T11:44:00.307400+08:00",
+  "source_commit": "f4637bfb342fb70d42bea0474eab9e62a3c99d68",
+  "tools": {
+    "goose": "goose f4637bf (runtime d521138194f1)",
+    "clang": "Homebrew clang version 22.1.8",
+    "rustc": "rustc 1.95.0-nightly (eda76d9d1 2026-01-21)",
+    "go": "go version go1.27.3 darwin/arm64",
+    "zig": "0.16.0"
+  },
+  "probes": {
+    "type_mismatch": {
+      "seconds": 0.03600674960762262,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "{work}/type_mismatch.goose:1: error: expected a value of type i64, got const u8[:]\nfn main() { let x: i64 = \"wrong\"; print(x); }\n                         ^~~~~~~\n  in fn main() instantiated from {work}/type_mismatch.goose:1",
+      "matches_expectation": true
+    },
+    "escape": {
+      "seconds": 0.004378166981041431,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "{work}/escape.goose:1: error: storing a reference rooted at inner, which does not outlive the destination (\u00a79.2)\nfn main() { var outer: u8[>..] = []; var w = outer[..]; { var inner: u8[>..] = [1]; w = inner[..]; } print(w.len); }\n                                                                                        ^~~~~~~~~\n  in fn main() instantiated from {work}/escape.goose:1",
+      "matches_expectation": true
+    },
+    "shrink_with_reference": {
+      "seconds": 0.004132708068937063,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "{work}/shrink_with_reference.goose:1: error: cannot clear xs while first is still used: it may hold a reference or slice into it (\u00a75.1)\nfn main() { var xs: i64[>..] = [1]; let first .= xs[0]; xs.clear(); print(first); }\n                                                        ^~~~~~~~~~\n  in fn main() instantiated from {work}/shrink_with_reference.goose:1",
+      "matches_expectation": true
+    },
+    "const_write": {
+      "seconds": 0.0038846246898174286,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "{work}/const_write.goose:1: error: cannot assign through this path (const, or a read-only instantiation, \u00a79.5)\nfn main() { const xs = [1,2]; xs[0] = 3; print(xs); }\n                              ^~~~~~~~~~\n  in fn main() instantiated from {work}/const_write.goose:1",
+      "matches_expectation": true
+    },
+    "stable_growth": {
+      "seconds": 0.2945716669782996,
+      "exit_code": 0,
+      "stdout": "7 7",
+      "stderr": "",
+      "matches_expectation": true,
+      "build_stderr": ""
+    },
+    "field_reflection": {
+      "seconds": 0.27896429086104035,
+      "exit_code": 0,
+      "stdout": "2",
+      "stderr": "",
+      "matches_expectation": true,
+      "build_stderr": ""
+    },
+    "thread_isolation": {
+      "seconds": 0.2819177499040961,
+      "exit_code": 0,
+      "stdout": "1 7",
+      "stderr": "",
+      "matches_expectation": true,
+      "build_stderr": ""
+    },
+    "bounds": {
+      "seconds": 0.28803412476554513,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "goose runtime error: index 3 out of bounds (length 2) ({work}/bounds.goose:1)",
+      "matches_expectation": true
+    }
+  },
+  "benchmark": {
+    "goose": {
+      "build": {
+        "samples_seconds": [
+          0.21288670785725117,
+          0.2107717921026051,
+          0.20859675016254187,
+          0.21462066611275077,
+          0.2107847910374403
+        ],
+        "median_seconds": 0.2107847910374403,
+        "min_seconds": 0.20859675016254187,
+        "max_seconds": 0.21462066611275077
+      },
+      "run": {
+        "samples_seconds": [
+          0.07530054217204452,
+          0.0756197921000421,
+          0.07754562515765429,
+          0.0762518746778369,
+          0.07632887503132224,
+          0.07580375019460917,
+          0.0763722499832511
+        ],
+        "median_seconds": 0.0762518746778369,
+        "min_seconds": 0.07530054217204452,
+        "max_seconds": 0.07754562515765429
+      },
+      "build_command": [
+        "goose",
+        "build",
+        "{work}/goose_5.goose",
+        "-O2",
+        "--offline",
+        "--cc",
+        "/opt/homebrew/bin/clang",
+        "-o",
+        "{work}/goose-bin"
+      ],
+      "output": "376378803"
+    },
+    "c": {
+      "build": {
+        "samples_seconds": [
+          0.1313415840268135,
+          0.13090991601347923,
+          0.13064550003036857,
+          0.13155345804989338,
+          0.1291828341782093
+        ],
+        "median_seconds": 0.13090991601347923,
+        "min_seconds": 0.1291828341782093,
+        "max_seconds": 0.13155345804989338
+      },
+      "run": {
+        "samples_seconds": [
+          0.07531712483614683,
+          0.0760737918317318,
+          0.07672220794484019,
+          0.07634620927274227,
+          0.07490670820698142,
+          0.07493312517181039,
+          0.07550108339637518
+        ],
+        "median_seconds": 0.07550108339637518,
+        "min_seconds": 0.07490670820698142,
+        "max_seconds": 0.07672220794484019
+      },
+      "build_command": [
+        "clang",
+        "-std=c11",
+        "-O3",
+        "{work}/c_5.c",
+        "-o",
+        "{work}/c-bin"
+      ],
+      "output": "376378803"
+    },
+    "rust": {
+      "build": {
+        "samples_seconds": [
+          0.10866245813667774,
+          0.11002804199233651,
+          0.10836687497794628,
+          0.10680208401754498,
+          0.10859654238447547
+        ],
+        "median_seconds": 0.10859654238447547,
+        "min_seconds": 0.10680208401754498,
+        "max_seconds": 0.11002804199233651
+      },
+      "run": {
+        "samples_seconds": [
+          0.07878645928576589,
+          0.07493499992415309,
+          0.07556437514722347,
+          0.07526774983853102,
+          0.07506125001236796,
+          0.07708325004205108,
+          0.07594362506642938
+        ],
+        "median_seconds": 0.07556437514722347,
+        "min_seconds": 0.07493499992415309,
+        "max_seconds": 0.07878645928576589
+      },
+      "build_command": [
+        "rustc",
+        "-C",
+        "opt-level=3",
+        "{work}/rust_5.rs",
+        "-o",
+        "{work}/rust-bin"
+      ],
+      "output": "376378803"
+    },
+    "go": {
+      "build": {
+        "samples_seconds": [
+          0.10907016694545746,
+          0.10854933317750692,
+          0.1170786670409143,
+          0.10875479225069284,
+          0.11029833275824785
+        ],
+        "median_seconds": 0.10907016694545746,
+        "min_seconds": 0.10854933317750692,
+        "max_seconds": 0.1170786670409143
+      },
+      "run": {
+        "samples_seconds": [
+          0.08972762478515506,
+          0.08944916585460305,
+          0.08782845782116055,
+          0.08739062491804361,
+          0.0887288749217987,
+          0.08926333300769329,
+          0.09395162481814623
+        ],
+        "median_seconds": 0.08926333300769329,
+        "min_seconds": 0.08739062491804361,
+        "max_seconds": 0.09395162481814623
+      },
+      "build_command": [
+        "go",
+        "build",
+        "-o",
+        "{work}/go-bin",
+        "{work}/go_5.go"
+      ],
+      "output": "376378803"
+    },
+    "zig": {
+      "build": {
+        "samples_seconds": [
+          0.10346458293497562,
+          0.10234525008127093,
+          0.10104599967598915,
+          0.1029635826125741,
+          0.1128870421089232
+        ],
+        "median_seconds": 0.1029635826125741,
+        "min_seconds": 0.10104599967598915,
+        "max_seconds": 0.1128870421089232
+      },
+      "run": {
+        "samples_seconds": [
+          0.07704537501558661,
+          0.07791720796376467,
+          0.07523079216480255,
+          0.07445591688156128,
+          0.07597958343103528,
+          0.0776219591498375,
+          0.0778955421410501
+        ],
+        "median_seconds": 0.07704537501558661,
+        "min_seconds": 0.07445591688156128,
+        "max_seconds": 0.07791720796376467
+      },
+      "build_command": [
+        "zig",
+        "build-exe",
+        "{work}/zig_5.zig",
+        "-O",
+        "ReleaseFast",
+        "-lc",
+        "-fno-incremental",
+        "--cache-dir",
+        "{work}/zig-cache-5",
+        "-femit-bin={work}/zig-bin"
+      ],
+      "output": "376378803"
+    }
+  },
+  "method": {
+    "build_runs": 5,
+    "execution_runs": 7,
+    "warmups": 1,
+    "iterations": 50000000,
+    "expected_output": "376378803",
+    "builds": "Serial round-robin, fresh source name/comment each time; warm toolchains, filesystem, and Goose runtime cache; fresh Zig local cache, incremental off",
+    "optimization": "Goose -O2 to C then Clang -O2 via goose build; C -O3; Rust opt-level=3; Go defaults; Zig ReleaseFast",
+    "scope": "Native CPU scalar loop; process startup and output included; no large-project, allocation, or multicore benchmark"
+  },
+  "machdep.cpu.brand_string": "Apple M4 Max",
+  "hw.memsize": "137438953472",
+  "hw.ncpu": "16",
+  "first_build_empty_runtime_cache": 0.7174717090092599
+}

@@ -9,8 +9,8 @@ We are especially interested in program correctness, memory safety and efficienc
 ## Contents
 
 - [Systems Programming](#systems-programming)
-- [Scientific and GPU Computing](#scientific-and-gpu-computing)
 - [Functional Programming and Proofs](#functional-programming-and-proofs)
+- [Scientific and GPU Computing](#scientific-and-gpu-computing)
 - [Domain-Specific Languages](#domain-specific-languages)
 - [Upcoming Languages](#upcoming-languages)
 - [Research and Experiments](#research-and-experiments)
@@ -19,6 +19,7 @@ We are especially interested in program correctness, memory safety and efficienc
 ## Systems Programming
 
 - [Gojo](https://github.com/egoist/gojo) — An experimental systems language with ownership, borrowing without lifetime parameters, deterministic cleanup, structured stackful tasks, and static reflection. Compiles to C. [Study](languages/gojo.md) · [中文](languages/gojo.zh-CN.md)
+- [Goose](https://github.com/aardappel/goose) — A systems language using compiler-managed data stacks, inferred reference roots, compact inline values, isolated worker threads, and specialization-time reflection. Compiles to C. [Study](languages/goose.md) · [中文](languages/goose.zh-CN.md)
 - [Rune](https://github.com/google/rune) — An unfinished systems language exploring secret-aware types, relational object ownership, Structure-of-Arrays storage, and compile-time code transformers. [Study](languages/rune.md) · [中文](languages/rune.zh-CN.md)
 
 ## Functional Programming and Proofs
@@ -45,6 +46,7 @@ We are especially interested in program correctness, memory safety and efficienc
 - [Mojo ownership probes and integer-loop benchmark](experiments/mojo-2026-11-11/run.py) — Compiler rejection checks, compile-time evaluation, and a C/Rust/Go/Zig comparison. [Results](experiments/mojo-2026-11-11/results.json)
 - [Rune behavior probes](experiments/rune-2026-11-11/README.md) — Secret handling, runtime checks, generated relationships, and a documented secret-branch discrepancy. [Results](experiments/rune-2026-11-11/results.json)
 - [Zed component checks and build observations](experiments/zed-2026-11-11/README.md) — Kernel bit-operation tests and current macOS build limitations. [Results](experiments/zed-2026-11-11/results.json)
+- [Goose storage, thread, and reflection probes](experiments/goose-2026-11-11/run.py) — Native behavior checks, an upstream checker run, and a C/Rust/Go/Zig integer-loop comparison. [Results](experiments/goose-2026-11-11/results.json)
 
 Research notes record source versions, primary references, limitations, and measurement conditions. Performance findings retain their workload and toolchain scope.
 

@@ -9,8 +9,8 @@
 ## 目录
 
 - [系统编程](#系统编程)
-- [科学计算与 GPU 编程](#科学计算与-gpu-编程)
 - [函数式编程与证明](#函数式编程与证明)
+- [科学计算与 GPU 编程](#科学计算与-gpu-编程)
 - [领域特定语言](#领域特定语言)
 - [预告阶段语言](#预告阶段语言)
 - [研究与实验](#研究与实验)
@@ -19,6 +19,7 @@
 ## 系统编程
 
 - [Gojo](https://github.com/egoist/gojo) — 实验性系统语言，结合所有权、无需生命周期参数的借用、确定性释放、结构化有栈任务和静态反射，通过 C 后端生成原生程序。[研究专题](languages/gojo.zh-CN.md) · [English](languages/gojo.md)
+- [Goose](https://github.com/aardappel/goose) — 系统语言，采用编译器管理的数据栈、推断的引用根、紧凑内联值、隔离工作线程和特化期反射，通过 C 后端生成原生程序。[研究专题](languages/goose.zh-CN.md) · [English](languages/goose.md)
 - [Rune](https://github.com/google/rune) — 尚未完成的系统语言，探索秘密值类型、关系式对象所有权、Structure-of-Arrays 存储和编译期代码 transformer。[研究专题](languages/rune.zh-CN.md) · [English](languages/rune.md)
 
 ## 函数式编程与证明
@@ -45,6 +46,7 @@
 - [Mojo 所有权探针与整数循环基准](experiments/mojo-2026-11-11/run.py) — 编译拒绝检查、编译期求值，以及 C／Rust／Go／Zig 对照。[实验结果](experiments/mojo-2026-11-11/results.json)
 - [Rune 行为探针](experiments/rune-2026-11-11/README.md) — 秘密值处理、运行时检查、关系生成，以及秘密值分支与文档不一致的反例。[实验结果](experiments/rune-2026-11-11/results.json)
 - [Zed 组件检查与构建观察](experiments/zed-2026-11-11/README.md) — Kernel 位运算测试，以及当前 macOS 构建限制。[检查记录](experiments/zed-2026-11-11/results.json)
+- [Goose 存储、线程与反射探针](experiments/goose-2026-11-11/run.py) — 原生行为检查、上游检查器测试，以及 C／Rust／Go／Zig 整数循环对照。[实验结果](experiments/goose-2026-11-11/results.json)
 
 研究记录注明源码版本、一手资料、能力边界和测量条件。性能结论保留其工作负载与工具链范围。
 

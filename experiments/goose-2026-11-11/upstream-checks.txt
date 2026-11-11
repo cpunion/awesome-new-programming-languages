@@ -1,0 +1,26 @@
+profile: baseline; C backend: none; JIT backend: none; audio: not built in; gfx: not built in; physics: not built in; ui: not built in
+== lexer and shader compiler: 5 ok
+== parse, roundtrip and typecheck: 1528 ok
+== optimizer, stack report and C shapes: 23 ok
+== bounds-check annotations: 68 ok
+== generated C, built and run at -O0 and -O2
+skip codegen run tests (no C compiler found or --nocgen)
+== generated C, built and run at -O0 and -O2: 0 ok
+== driver, diagnostics and language server: 54 ok
+== native builds, packages and runtime I/O: 1 ok
+== goose_in_goose bootstrap
+skip native goose_in_goose bootstrap (no C compiler found or --nocgen)
+== goose_in_goose bootstrap: 2 ok
+== JIT (TinyCC) runs
+skip JIT run tests (sanitizer profile, --no-jit, or a compiler built without the TinyCC backend)
+== JIT (TinyCC) runs: 0 ok
+== parse errors (errors/): 80 ok
+== typecheck errors (errors_tc/ and native modules' rejection tests): 1958 ok
+== recovery (errors_tc/recovery/): 16 ok
+== long call chains and guard runs: 2 ok
+== language reference examples (docs/reference.md): 1 ok
+== samples
+skip audio, gfx, physics or ui sample(s) (no layer for them, or no GPU device): 27_gfx_cube.goose, 28_physics_boxes.goose, 29_ui_todo.goose, 30_mini_minecraft.goose, 31_mini_doom.goose
+== samples: 27 ok
+(41s with 4 job(s))
+all tests passed

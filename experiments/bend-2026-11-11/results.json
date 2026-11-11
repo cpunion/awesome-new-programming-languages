@@ -1,0 +1,412 @@
+{
+  "measured_at": "2026-11-11T09:46:56.369690+08:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "bend_commit": "d18110b6d6e9a70bb8814b2a8d8db092e301e540",
+  "iterations": 50000000,
+  "expected_output": "376378803",
+  "tools": {
+    "bun": {
+      "executable": "bun",
+      "version": "1.2.21"
+    },
+    "clang": {
+      "executable": "clang",
+      "version": "Homebrew clang version 22.1.8"
+    },
+    "rustc": {
+      "executable": "rustc",
+      "version": "rustc 1.95.0-nightly (eda76d9d1 2026-01-21)"
+    },
+    "go": {
+      "executable": "go",
+      "version": "go version go1.27.3 darwin/arm64"
+    },
+    "zig": {
+      "executable": "zig",
+      "version": "0.16.0"
+    },
+    "git": {
+      "executable": "git",
+      "version": "git version 2.55.0"
+    },
+    "bend": "bend 2.0.40"
+  },
+  "method": {
+    "build_runs": 5,
+    "execution_runs": 7,
+    "warmups": 1,
+    "build_cache": "Warm standard libraries and filesystem; a fresh source filename and comment per build, fresh Zig local cache per build; no application incremental state",
+    "execution": "Serial round-robin runs, wall time including process start and output; Bend CPU threads=1, GPU=off",
+    "bend_entry": "Bun source CLI, including checking, C emission and clang -O3 linking",
+    "scope": "One fixed-seed integer loop; no application, allocation, memory, concurrency or GPU benchmark",
+    "tool_paths": "Command names are recorded without absolute executable paths"
+  },
+  "probes": {
+    "true_law": {
+      "seconds": 0.29035491682589054,
+      "exit_code": 0,
+      "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.",
+      "stderr": "",
+      "matches_expectation": true
+    },
+    "inductive_law": {
+      "seconds": 0.29315866716206074,
+      "exit_code": 0,
+      "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity.",
+      "stderr": "",
+      "matches_expectation": true
+    },
+    "false_law": {
+      "seconds": 0.3416822920553386,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError:\n- expected : 0n\n- observed : 1n\nLocation: false_claim\n4 | def false_claim():\n5>|   {==}\n  |   ^^^^\n6 | \nNote: the left side of the equality is the expected, the right side is the observed.",
+      "matches_expectation": true
+    },
+    "open_law": {
+      "seconds": 0.3857584581710398,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.",
+      "matches_expectation": true
+    },
+    "reuse_array": {
+      "seconds": 0.3539710002951324,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError:\n- expected : a\n- observed : a (consumed more than once)\nLocation: duplicate\n1 | \n2>| def duplicate(a: Array<U32>) -> Array<U32> & Array<U32>:\n  |               ^\n3 |   (a, a)",
+      "matches_expectation": true
+    },
+    "reuse_closure": {
+      "seconds": 0.3386931670829654,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError:\n- expected : f\n- observed : f (consumed more than once)\nLocation: twice\n1 | \n2>| def twice(f: U32 -> U32, x: U32) -> U32:\n  |           ^\n3 |   f(f(x))",
+      "matches_expectation": true
+    },
+    "type_mismatch": {
+      "seconds": 0.2910691252909601,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError:\n- expected : U32\n- observed : Bool\nLocation: bad\n2 | def bad() -> U32:\n3>|   True{}\n  |   ^^^^^^\n4 |",
+      "matches_expectation": true
+    },
+    "incomplete_match": {
+      "seconds": 0.2948637502267957,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError:\n- message  : this match doesn't cover False\nLocation: bad\n2 | def bad(x: Bool) -> U32:\n3>|   match x:\n  |   ^^^^^^^^\n4 |     case True{}:\nNote: add the missing cases, or a catch-all case.",
+      "matches_expectation": true
+    },
+    "nondecreasing_recursion": {
+      "seconds": 0.29723316710442305,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError:\n- expected : a call smaller than loop(n) (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : loop(n)\nContext:\n- n : Nat\nLocation: loop\n2 | def loop(n: Nat) -> Nat:\n3>|   loop(n)\n  |   ^^^^\n4 |",
+      "matches_expectation": true
+    },
+    "unsafe_recursion": {
+      "seconds": 0.29415254201740026,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError: 1 def relies on unsafe or foreign code:\ndefs that depend on @unsafe: loop",
+      "matches_expectation": true
+    },
+    "array_wrap": {
+      "seconds": 0.06553020887076855,
+      "exit_code": 0,
+      "stdout": "42",
+      "stderr": "",
+      "matches_expectation": true
+    }
+  },
+  "benchmark": {
+    "bend": {
+      "build": {
+        "samples_seconds": [
+          1.1086417082697153,
+          0.8825421673245728,
+          1.1306495410390198,
+          0.9031699998304248,
+          0.8046780000440776
+        ],
+        "median_seconds": 0.9031699998304248,
+        "min_seconds": 0.8046780000440776,
+        "max_seconds": 1.1306495410390198
+      },
+      "run": {
+        "samples_seconds": [
+          0.1106590828858316,
+          0.11075158324092627,
+          0.11054083285853267,
+          0.12770608393475413,
+          0.11180704087018967,
+          0.11040320806205273,
+          0.10974041698500514
+        ],
+        "median_seconds": 0.1106590828858316,
+        "min_seconds": 0.10974041698500514,
+        "max_seconds": 0.12770608393475413
+      },
+      "build_command": [
+        "bun",
+        "--no-env-file",
+        "--no-config",
+        "{bend}/bend2/main.ts",
+        "{work}/bend_5.bend",
+        "-o",
+        "{work}/bend_bin"
+      ],
+      "output": "376378803",
+      "binary_bytes": 70216
+    },
+    "c": {
+      "build": {
+        "samples_seconds": [
+          0.17377762496471405,
+          0.17234200006350875,
+          0.22217041673138738,
+          0.1771826669573784,
+          0.1818586247973144
+        ],
+        "median_seconds": 0.1771826669573784,
+        "min_seconds": 0.17234200006350875,
+        "max_seconds": 0.22217041673138738
+      },
+      "run": {
+        "samples_seconds": [
+          0.11015362525358796,
+          0.11074454197660089,
+          0.1100334171205759,
+          0.11814962513744831,
+          0.11263808282092214,
+          0.10990845924243331,
+          0.1094459998421371
+        ],
+        "median_seconds": 0.11015362525358796,
+        "min_seconds": 0.1094459998421371,
+        "max_seconds": 0.11814962513744831
+      },
+      "build_command": [
+        "clang",
+        "-std=c11",
+        "-O3",
+        "{work}/c_5.c",
+        "-o",
+        "{work}/c_bin"
+      ],
+      "output": "376378803",
+      "binary_bytes": 33432
+    },
+    "rust": {
+      "build": {
+        "samples_seconds": [
+          0.15956295793876052,
+          0.13284887513145804,
+          0.20440379111096263,
+          0.13759325025603175,
+          0.1335667916573584
+        ],
+        "median_seconds": 0.13759325025603175,
+        "min_seconds": 0.13284887513145804,
+        "max_seconds": 0.20440379111096263
+      },
+      "run": {
+        "samples_seconds": [
+          0.11117204185575247,
+          0.11126345908269286,
+          0.11056637484580278,
+          0.11056395806372166,
+          0.10975820804014802,
+          0.11039958288893104,
+          0.11162729235365987
+        ],
+        "median_seconds": 0.11056637484580278,
+        "min_seconds": 0.10975820804014802,
+        "max_seconds": 0.11162729235365987
+      },
+      "build_command": [
+        "rustc",
+        "-C",
+        "opt-level=3",
+        "{work}/rust_5.rs",
+        "-o",
+        "{work}/rust_bin"
+      ],
+      "output": "376378803",
+      "binary_bytes": 466760
+    },
+    "go": {
+      "build": {
+        "samples_seconds": [
+          0.179729875177145,
+          0.14341758284717798,
+          0.2152273328974843,
+          0.1405841251835227,
+          0.14323812490329146
+        ],
+        "median_seconds": 0.14341758284717798,
+        "min_seconds": 0.1405841251835227,
+        "max_seconds": 0.2152273328974843
+      },
+      "run": {
+        "samples_seconds": [
+          0.13039133278653026,
+          0.12972591584548354,
+          0.12870216695591807,
+          0.12910712510347366,
+          0.12815937492996454,
+          0.12881350005045533,
+          0.12956687482073903
+        ],
+        "median_seconds": 0.12910712510347366,
+        "min_seconds": 0.12815937492996454,
+        "max_seconds": 0.13039133278653026
+      },
+      "build_command": [
+        "go",
+        "build",
+        "-o",
+        "{work}/go_bin",
+        "{work}/go_5.go"
+      ],
+      "output": "376378803",
+      "binary_bytes": 2429730
+    },
+    "zig": {
+      "build": {
+        "samples_seconds": [
+          0.14472937490791082,
+          0.14217445766553283,
+          0.14410695899277925,
+          0.1458708751015365,
+          0.14522104198113084
+        ],
+        "median_seconds": 0.14472937490791082,
+        "min_seconds": 0.14217445766553283,
+        "max_seconds": 0.1458708751015365
+      },
+      "run": {
+        "samples_seconds": [
+          0.11151649989187717,
+          0.11060108384117484,
+          0.11045849975198507,
+          0.11142170801758766,
+          0.1092780833132565,
+          0.10981675004586577,
+          0.11302358284592628
+        ],
+        "median_seconds": 0.11060108384117484,
+        "min_seconds": 0.1092780833132565,
+        "max_seconds": 0.11302358284592628
+      },
+      "build_command": [
+        "zig",
+        "build-exe",
+        "{work}/zig_5.zig",
+        "-O",
+        "ReleaseFast",
+        "-lc",
+        "-fno-incremental",
+        "--cache-dir",
+        "{work}/zig_cache_5",
+        "-femit-bin={work}/zig_bin"
+      ],
+      "output": "376378803",
+      "binary_bytes": 50216
+    }
+  },
+  "machdep.cpu.brand_string": "Apple M4 Max",
+  "hw.memsize": "137438953472",
+  "hw.ncpu": "16",
+  "kernel": {
+    "status": "built_and_checked",
+    "lean_version": "Lean (version 4.34.1, arm64-apple-darwin24.6.0, commit 5045d0056413266e57c625dcd7c365b10e377c52, Release)",
+    "source_sha256": "3e9b678d00a754fc6f4281584e470f7c677093b03eccfc244085afdee8e020a6",
+    "lean_check": {
+      "seconds": 31.072480583097786,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "native_build": {
+      "seconds": 16.167416375130415,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "probes": {
+      "true_law": {
+        "seconds": 1.3576733330264688,
+        "exit_code": 0,
+        "stdout": "ALL PROOFS CHECK",
+        "stderr": "",
+        "matches_expectation": true
+      },
+      "inductive_law": {
+        "seconds": 1.0117391250096262,
+        "exit_code": 0,
+        "stdout": "ALL PROOFS CHECK",
+        "stderr": "",
+        "matches_expectation": true
+      },
+      "false_law": {
+        "seconds": 1.012303208000958,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError:\n- expected : 0n\n- observed : 1n\nLocation: false_claim\n4 | def false_claim():\n5>|   {==}\n  |   ^^^^\n6 | \nNote: the left side of the equality is the expected, the right side is the observed.",
+        "matches_expectation": true
+      },
+      "open_law": {
+        "seconds": 0.8466947912238538,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError: 1 TODO found.\nThe code is incomplete, and not a valid proof yet.",
+        "matches_expectation": true
+      },
+      "reuse_array": {
+        "seconds": 0.6944495420902967,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError:\n- expected : a\n- observed : a (consumed more than once)\nLocation: duplicate\n1 | \n2>| def duplicate(a: Array<U32>) -> Array<U32> & Array<U32>:\n  |               ^\n3 |   (a, a)",
+        "matches_expectation": true
+      },
+      "reuse_closure": {
+        "seconds": 0.6690287911333144,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError:\n- expected : f\n- observed : f (consumed more than once)\nLocation: twice\n1 | \n2>| def twice(f: U32 -> U32, x: U32) -> U32:\n  |           ^\n3 |   f(f(x))",
+        "matches_expectation": true
+      },
+      "type_mismatch": {
+        "seconds": 0.9977560001425445,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError:\n- expected : U32\n- observed : Bool\nLocation: bad\n2 | def bad() -> U32:\n3>|   True{}\n  |   ^^^^^^\n4 |",
+        "matches_expectation": true
+      },
+      "incomplete_match": {
+        "seconds": 0.6368488748557866,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError:\n- message  : this match doesn't cover False\nLocation: bad\n2 | def bad(x: Bool) -> U32:\n3>|   match x:\n  |   ^^^^^^^^\n4 |     case True{}:\nNote: add the missing cases, or a catch-all case.",
+        "matches_expectation": true
+      },
+      "nondecreasing_recursion": {
+        "seconds": 0.6681830841116607,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError:\n- expected : a call smaller than loop(n) (arguments are read left to right: each passed unchanged until one shrinks)\n- observed : loop(n)\nContext:\n- n : Nat\nLocation: loop\n2 | def loop(n: Nat) -> Nat:\n3>|   loop(n)\n  |   ^^^^\n4 |",
+        "matches_expectation": true
+      },
+      "unsafe_recursion": {
+        "seconds": 0.7655739579349756,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "SOME PROOFS FAIL\nError: 1 def relies on unsafe or foreign code:\ndefs that depend on @unsafe: loop",
+        "matches_expectation": true
+      }
+    }
+  }
+}

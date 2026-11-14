@@ -70,6 +70,8 @@ If users require arbitrary strong cycles and automatic reclamation after the las
 
 That option is GC and fails a strict no-GC requirement. Reference counting with a cycle strategy is another option, with its own costs. Neither should be inserted invisibly under an API advertised as having the core's reclamation guarantees. A hybrid design can make these distinct store policies explicit and keep scoped data on the inexpensive path.
 
+The later [Goose-style data stacks with a GC fallback](goose-hybrid-gc.md) study explores relaxing the strict no-GC constraint, including automatic placement and the safety requirements for cross-memory references.
+
 ## Recommended prototype boundary
 
 Start with Goose-style scoped stacks plus a single-owner deletable store. Add checked identity, a small ownership/observation schema, and synchronous access phases with deferred structural edits. Keep compiler inference focused on reference validity, phase escape, and safe storage reuse. Handle recursive payloads and variable-size data through the store allocator instead of requiring every entity to own a statically numbered data stack.

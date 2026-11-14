@@ -14,6 +14,28 @@ The later PLDI 2023 paper identifies and repairs a soundness problem in earlier 
 
 Go's standard implementation is a familiar example of automatic stack placement with GC-managed heap allocation when a local's lifetime cannot be proven confined to the stack. Goose's potential contribution would be the richer multi-data-stack placement, destination construction, and compact variable-size layout that could keep more dynamic data off a traced heap. How much more, and at what compilation cost, remains unmeasured. [Go allocation FAQ](https://go.dev/doc/faq#stack_or_heap) · [Goose storage model](https://github.com/aardappel/goose/blob/32a4f445d8a94b22874a28469f95f69ba3ac31dd/docs/reference.md#4-where-values-live)
 
+## Who selects a data stack?
+
+Goose determines stack requirements and safe placement rules at compile time, but its current C backend passes stack identities at runtime. It does not permanently bind every local in a shared function body to an absolute global stack number. The inspected `f4637bf` implementation uses a hidden `gs_sp` base index and constant per-function offsets: a local addresses `gs_stks[gs_sp + k]`, and a callee receives a base above the caller's occupied indices. The compiler computes the required stack count. [Code generation model](https://github.com/aardappel/goose/blob/f4637bfb342fb70d42bea0474eab9e62a3c99d68/src/codegen.h#L20) · [Live specification, §10.3](https://aardappel.github.io/goose/docs/goose_spec.html#103-stack-assignment-deterministic-recipe)
+
+Conceptually, omitting other temporaries and result destinations:
+
+```text
+work(base):
+    a uses S[base + 0]
+    {
+        b uses S[base + 1]
+        child receives base + 2 for its local stacks
+    }
+    c can reuse S[base + 1]
+```
+
+The offsets and reuse points are determined during compilation; the passed base identifies the concrete stacks for this call. Scope exit restores byte tops and releases the corresponding index range for subsequent scopes. Last use alone need not end the owner's scope. [Scope and index management](https://github.com/aardappel/goose/blob/f4637bfb342fb70d42bea0474eab9e62a3c99d68/src/codegen_frames.h#L1077)
+
+Stack assignment follows storage owners, nesting, and independent growth, rather than object type or size buckets. Many inline elements can occupy one container's stack. A reference used to grow an existing value carries that value's stack identity; a nonfixed result receives a caller-selected destination stack separately from the callee's local-stack base. Neither operation searches for an unused stack or reruns lifetime inference. At runtime, byte counts, top pointers, physical addresses, and committed pages vary. Each worker instance has its own stack storage, with requirements computed for its thread program. [Implementation notes](https://aardappel.github.io/goose/docs/goose_spec.html#appendix-e-implementation-notes-informative)
+
+The recursion restrictions keep the stack count statically bounded. Runtime-created stacks for independently growable nested elements remain a future feature in §11.3. A proposed hybrid could instead create a region instance when a task starts and pass an implicit region handle through its calls, while proving reference validity statically. That extension would change runtime storage instantiation without requiring a runtime heuristic to guess each object's lifetime. It is a design option, not current Goose behavior.
+
 ## Which workloads each storage path can cover
 
 The following is a design assessment of the proposed hybrid, not a claim that Goose already implements all these paths. Escape analysis is only part of the implementation: choosing a data stack also requires region/lifetime inference, compatible growth and aliasing rules, and often caller-provided destinations.

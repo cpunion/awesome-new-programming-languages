@@ -14,6 +14,28 @@ MLKit 已结合区域推断与 GC。Elsman 和 Hallenberg 的 2021 年工作将�
 
 Go 的标准实现是熟悉的例子：自动选择栈分配，不能证明局部值寿命局限于栈时使用 GC 堆。Goose 的潜在价值在于更丰富的多数据栈安排、目标位置构造和紧凑变长布局，有机会让更多动态数据离开追踪堆。究竟多多少、编译代价多大，尚未测量。[Go 分配说明](https://go.dev/doc/faq#stack_or_heap) · [Goose 存储模型](https://github.com/aardappel/goose/blob/32a4f445d8a94b22874a28469f95f69ba3ac31dd/docs/reference.md#4-where-values-live)
 
+## 谁决定使用哪个数据栈？
+
+Goose 在编译期确定栈需求与安全分配规则，但当前 C 后端会在运行期传递栈身份，并非把共享函数体中的每个局部值永久绑定到某个全局栈编号。已检查的 `f4637bf` 实现使用隐藏的 `gs_sp` 基址与函数内常量偏移：局部值访问 `gs_stks[gs_sp + k]`，被调用函数收到的基址位于调用者已占用编号之后。所需栈数量由编译器计算。[代码生成模型](https://github.com/aardappel/goose/blob/f4637bfb342fb70d42bea0474eab9e62a3c99d68/src/codegen.h#L20) · [在线规范第 10.3 节](https://aardappel.github.io/goose/docs/goose_spec.html#103-stack-assignment-deterministic-recipe)
+
+省略其他临时值与返回目标后的概念示例：
+
+```text
+work(base):
+    a 使用 S[base + 0]
+    {
+        b 使用 S[base + 1]
+        child 收到 base + 2，作为其局部数据栈的起点
+    }
+    c 可以复用 S[base + 1]
+```
+
+偏移与复用位置在编译时确定；传入的基址将规则落实到此次调用的具体栈。作用域退出时，恢复字节栈顶，并让对应编号范围可供后续作用域复用。最后一次使用并不一定结束拥有者作用域。[作用域与编号管理实现](https://github.com/aardappel/goose/blob/f4637bfb342fb70d42bea0474eab9e62a3c99d68/src/codegen_frames.h#L1077)
+
+划分依据是存储拥有者、嵌套关系和独立增长需求，不是按对象类型或大小分桶。一个容器中的大量内联元素可以共用它的数据栈。通过引用增长已有值时，引用携带该值的栈身份；非定长返回值则接收调用者选定的目标栈，与被调用函数的局部栈基址分别传递。两者都不需要搜索空闲栈或重新推断寿命。运行期变化的是字节数、栈顶、实际地址与已提交页面。每个 worker 实例拥有自己的栈存储，需求按其线程程序编译计算。[实现说明](https://aardappel.github.io/goose/docs/goose_spec.html#appendix-e-implementation-notes-informative)
+
+递归限制使栈数量保持静态有界。为独立增长的嵌套元素动态创建栈，仍是第 11.3 节的未来设计。拟议混合语言也可以在任务开始时创建区域实例，再沿调用传递隐式区域句柄，同时静态证明引用有效。这会改变运行期存储的实例化方式，但不要求运行期猜测每个对象的寿命；它是扩展方案，不是当前 Goose 行为。
+
 ## 三种存储路径分别覆盖什么
 
 以下是对拟议混合模型的设计判断，不表示 Goose 已经实现全部路径。逃逸分析只是其中一部分：选择数据栈还需要区域／寿命推断、兼容的增长与别名规则，往往还需要调用者提供构造目标。
